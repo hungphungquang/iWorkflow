@@ -1,0 +1,9 @@
+# Legacy system artifacts: decompiled sources, binaries, prod server config (contain credentials) – keep local only
+analysis/
+server/
+
+# Raw production data exports (usernames, system parameters, DB survey output) – keep local only
+phase0/abandoned-instances.csv
+phase0/ht_tham_so-iw_prod.*
+phase0/result-*
+phase0/4m/analysis-4m*.txt
