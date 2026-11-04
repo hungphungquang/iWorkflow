@@ -1,0 +1,266 @@
+
+################ PROCESS AntoanProc_2510 – 4M Change - Related Laws Assessment
+- [startEvent] sid-69557C07-BD0E-485D-A2A4-78BC34AAF518 "sid-69557C07-BD0E-485D-A2A4-78BC34AAF518"
+- [userTask] AnToanRiskAssessment "Laws Assessment"
+    
+assignee=cong.vuchi    formKey=P4M_ATXL#Button_4M_ATPC    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4M_RiskAssessment_P4MForm_SafetyLawNo:string, P4M_RiskAssessment_P4MForm_RelateSafe:enum, P4M_RiskAssessment_P4MForm_SafetyAction:string, P4M_RiskAssessment_P4MForm_EnvLawNo:string, P4M_RiskAssessment_P4MForm_EnvRelated:enum, P4M_RiskAssessment_P4MForm_EnvAction:string, P4M_RiskAssessment_P4M_CBXL_BMC_P4M_CBXL_CB:string, P4M_RiskAssessment_P4M_CBXL_BMC_P4M_CBXL_ND:string, Button_4M_ATPC:enum] (9)    doc='322A Section check Risk Assessment'
+- [exclusiveGateway] sid-73BF8B10-C964-475F-BE72-ECD51A503A6C "sid-73BF8B10-C964-475F-BE72-ECD51A503A6C"
+- [subProcess] sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F "subProcess"
+    
+MULTI(seq=false, collection=P4M_CBATXL_BMC, elem=element_var, completion=)
+  - [startEvent] sid-E80E0A82-C397-43EE-B6DD-F09063B692EC "sid-E80E0A82-C397-43EE-B6DD-F09063B692EC"
+  - [serviceTask] sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C "Get data"
+      
+  class=com.eform.servicetask.MultiInstanceProcessData
+  - [userTask] sid-2C21CB23-CAD0-425B-A356-F306BA6438D8 "Staff check 4M Request"
+      
+  assignee=${P4M_CBXL_CB}    formKey=P4M_CBXL    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4M_CBXL_CB:string, P4M_CBXL_ND:string] (2)    doc='An toan Staff check 4M Request'
+  - [endEvent] sid-B1671398-E112-444E-859A-90A66003E09E "sid-B1671398-E112-444E-859A-90A66003E09E"
+- [exclusiveGateway] sid-DEE2F0CF-386A-45C2-B921-58282A43E49B "sid-DEE2F0CF-386A-45C2-B921-58282A43E49B"
+- [userTask] sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3 "Laws Assessment"
+    
+assignee=cong.vuchi    formKey=P4M_ATXL#Button_4M_ATPC    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4M_RiskAssessment_P4MForm_SafetyLawNo:string, P4M_RiskAssessment_P4MForm_RelateSafe:enum, P4M_RiskAssessment_P4MForm_SafetyAction:string, P4M_RiskAssessment_P4MForm_EnvLawNo:string, P4M_RiskAssessment_P4MForm_EnvRelated:enum, P4M_RiskAssessment_P4MForm_EnvAction:string, P4M_RiskAssessment_P4M_CBXL_BMC_P4M_CBXL_CB:string, P4M_RiskAssessment_P4M_CBXL_BMC_P4M_CBXL_ND:string, Button_4M_ATPC:enum] (9)    doc='322A Section check Risk Assessment'
+- [endEvent] sid-E1855242-2521-41E7-8693-EE725BC15235 "sid-E1855242-2521-41E7-8693-EE725BC15235"
+  FLOWS:
+    sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C -> sid-2C21CB23-CAD0-425B-A356-F306BA6438D8
+    sid-2C21CB23-CAD0-425B-A356-F306BA6438D8 -> sid-B1671398-E112-444E-859A-90A66003E09E
+    sid-E80E0A82-C397-43EE-B6DD-F09063B692EC -> sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C
+    AnToanRiskAssessment -> sid-73BF8B10-C964-475F-BE72-ECD51A503A6C
+    sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F -> sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3
+    sid-73BF8B10-C964-475F-BE72-ECD51A503A6C -> sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F [Assignment]  if ${Button_4M_ATPC=='BT_4M_AT_PC'}
+    sid-DEE2F0CF-386A-45C2-B921-58282A43E49B -> sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F [Assignment]  if ${Button_4M_ATPC=='BT_4M_AT_PC'}
+    sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3 -> sid-DEE2F0CF-386A-45C2-B921-58282A43E49B
+    sid-73BF8B10-C964-475F-BE72-ECD51A503A6C -> sid-DEE2F0CF-386A-45C2-B921-58282A43E49B [Self-handing]  if ${Button_4M_ATPC=='BT_4M_AT_PD'}
+    sid-DEE2F0CF-386A-45C2-B921-58282A43E49B -> sid-E1855242-2521-41E7-8693-EE725BC15235 [Approve]  if ${Button_4M_ATPC=='BT_4M_AT_PD'}
+    sid-69557C07-BD0E-485D-A2A4-78BC34AAF518 -> AnToanRiskAssessment
+
+################ PROCESS Process4MChange – Before 4M Change
+- [startEvent] sid-2D5793DE-D6D0-4C84-8927-9AC506A31149 "sid-2D5793DE-D6D0-4C84-8927-9AC506A31149"
+- [userTask] sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF "Create 4M Change request"
+    
+assignee=${init}    formKey=P4MForm_Request_BTMV    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4MForm_Title:string, P4MForm_ProcessText:string, P4M_class:string, P4MForm_Situation:string, P4MForm_Detail:string, P4MForm_Purpose:string, P4MForm_ExpectedDate:date, P4MForm_NguoiDN:string, P4MForm_DonVi:string, RiskAm_BMC_View_P4MForm_SafetyLawNo:string, RiskAm_BMC_View_P4MForm_RelateSafe:enum, RiskAm_BMC_View_P4MForm_SafetyAction:string …] (20)    doc='Tạo yêu cầu thay đổi 4M'
+- [userTask] ManagerApprove "Manager check 4M Change request"
+    
+assignee=${P4MForm_DonVi_DAI_DIEN}    formKey=P4MForm_Request_BTMV#P4M_Button_PDTC    dueDate=P2D    priority=1    formProps[P4MForm_Title:string, P4MForm_ProcessText:string, P4M_class:string, P4MForm_Situation:string, P4MForm_Detail:string, P4MForm_Purpose:string, P4MForm_ExpectedDate:date, P4MForm_NguoiDN:string, P4MForm_DonVi:string, RiskAm_BMC_View_P4MForm_SafetyLawNo:string, RiskAm_BMC_View_P4MForm_RelateSafe:enum, RiskAm_BMC_View_P4MForm_SafetyAction:string …] (21)    doc='Trưởng phòng phê duyệt yêu cầu thay đổi 4M'
+- [exclusiveGateway] sid-4B57430F-C15E-40DF-AAD8-C47F24499428 "sid-4B57430F-C15E-40DF-AAD8-C47F24499428"
+- [userTask] GeneralApprove "General Manager approve 4M Change request"
+    
+assignee=${P4MForm_DonVi_LANH_DAO}    formKey=P4MForm_BTMV_RV#P4M_Button_PDTC    dueDate=P2D    priority=1    formProps[P4MForm_Title:string, P4MForm_ProcessText:string, P4M_class:string, P4MForm_Situation:string, P4MForm_Detail:string, P4MForm_Purpose:string, P4MForm_ExpectedDate:date, P4MForm_NguoiDN:string, P4MForm_DonVi:string, RiskAm_BMC_View_P4MForm_SafetyLawNo:string, RiskAm_BMC_View_P4MForm_RelateSafe:enum, RiskAm_BMC_View_P4MForm_SafetyAction:string …] (21)    doc='General Manager phê duyệt yêu cầu thay đổi 4M'
+- [exclusiveGateway] sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4 "sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4"
+- [transaction] sid-C23F28A8-D04A-46BF-B363-627E429E1171 "sub process"
+    
+MULTI(seq=false, collection=P4M_PBXL_BMC, elem=element_var, completion=)
+  - [startEvent] sid-238E87AF-984A-48B2-9BD4-3E6B59730D01 "sid-238E87AF-984A-48B2-9BD4-3E6B59730D01"
+  - [serviceTask] sid-C2C0930E-6032-45C5-A362-138ED2EF6191 "Get data"
+      
+  class=com.eform.servicetask.MultiInstanceProcessData
+  - [callActivity] sid-5340C041-20F4-4EBF-942D-0C9D0FD19B68 "Process steps in Relate Sections"
+      
+  calledElement=RelSecProc_2510    in(${P4M_PBXL_PB_DAI_DIEN}->init)    in(P4M_PBXL_BMC@${loopCounter+1}->dataLoopPath)    out(${Button_4M_TPPC}->Button_4M_TPPC)
+  - [exclusiveGateway] sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D "sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D"
+  - [endEvent] sid-BD78F673-44BD-4AB6-82EF-BC4182DE5DD5 "sid-BD78F673-44BD-4AB6-82EF-BC4182DE5DD5"
+  - [endEvent] sid-7D4B8FF6-BC84-444E-ABFE-C15F42F0883C "sid-7D4B8FF6-BC84-444E-ABFE-C15F42F0883C"
+      
+  cancelEventDefinition
+  - [endEvent] sid-AA197883-B99B-4A8E-AE24-88AAF954179C "sid-AA197883-B99B-4A8E-AE24-88AAF954179C"
+      
+  errorEventDefinition
+- [callActivity] sid-8A0B4112-BA88-4710-BF15-5DBC3FBAEA8B "Approval process result 4M Change"
+    
+calledElement=Process4MChangeResult    in(${P4MForm_NguoiDN}->init)
+- [userTask] sid-D310FEED-856A-4543-A324-4BF9F78671DC "General Director approve to continue 4M Change"
+    
+assignee=Toshiaki.Matsushima    formKey=P4MForm_BTMV_RV#Button_4M_XL    dueDate=P3D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4MForm_Title:string, P4MForm_ProcessText:string, P4M_class:string, P4MForm_Situation:string, P4MForm_Detail:string, P4MForm_Purpose:string, P4MForm_ExpectedDate:date, P4MForm_NguoiDN:string, P4MForm_DonVi:string, RiskAm_BMC_View_P4MForm_SafetyLawNo:string, RiskAm_BMC_View_P4MForm_RelateSafe:enum, RiskAm_BMC_View_P4MForm_SafetyAction:string …] (21)    doc='General Manager processing cancel'
+- [boundaryEvent] sid-D2729346-0BE8-491B-9A5A-7999DB106740 "sid-D2729346-0BE8-491B-9A5A-7999DB106740"
+    
+attachedToRef=sid-C23F28A8-D04A-46BF-B363-627E429E1171    cancelActivity=false    cancelEventDefinition
+- [boundaryEvent] sid-ACF1BD51-79EA-42A8-9E5A-584E11BB7C5C "sid-ACF1BD51-79EA-42A8-9E5A-584E11BB7C5C"
+    
+attachedToRef=sid-C23F28A8-D04A-46BF-B363-627E429E1171    errorEventDefinition
+- [exclusiveGateway] sid-66C0E154-5BE4-45E5-AD5A-5573CDDA449F "sid-66C0E154-5BE4-45E5-AD5A-5573CDDA449F"
+- [endEvent] sid-41DE9024-9EAB-43E4-9851-115516392E5D "The END"
+    
+terminateEventDefinition
+- [serviceTask] GMDuyetquaMail "General Manager approve 4M Change request"
+    
+class=com.eform.servicetask.CreateEmailPheDuyetTask    field(subject=Phê duyệt qua mail)    field(activityId=GeneralApprove)
+- [serviceTask] ManagerDuyetMail "Manager check 4M Change request"
+    
+class=com.eform.servicetask.CreateEmailPheDuyetTask    field(subject=Phê duyệt qua mail)    field(activityId=ManagerApprove)
+- [serviceTask] sid-4672F8D2-5931-41CE-A39E-AFBB3E9658D9 "Reject"
+    
+class=com.eform.servicetask.CreateEmailRejectTask
+  FLOWS:
+    sid-2D5793DE-D6D0-4C84-8927-9AC506A31149 -> sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF
+    ManagerApprove -> sid-4B57430F-C15E-40DF-AAD8-C47F24499428
+    GeneralApprove -> sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4
+    sid-C2C0930E-6032-45C5-A362-138ED2EF6191 -> sid-5340C041-20F4-4EBF-942D-0C9D0FD19B68
+    sid-238E87AF-984A-48B2-9BD4-3E6B59730D01 -> sid-C2C0930E-6032-45C5-A362-138ED2EF6191
+    sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D -> sid-AA197883-B99B-4A8E-AE24-88AAF954179C [Update]  if ${Button_4M_TPPC=='Button_4M_TPXL_YCCS'}
+    sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D -> sid-BD78F673-44BD-4AB6-82EF-BC4182DE5DD5 [Approve]  if ${Button_4M_TPPC=='Button_4M_TPXL_PD'}
+    sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D -> sid-7D4B8FF6-BC84-444E-ABFE-C15F42F0883C [Reject]  if ${Button_4M_TPPC=='Button_4M_TPXL_TC'}
+    sid-5340C041-20F4-4EBF-942D-0C9D0FD19B68 -> sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D
+    sid-8A0B4112-BA88-4710-BF15-5DBC3FBAEA8B -> sid-41DE9024-9EAB-43E4-9851-115516392E5D
+    sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4 -> sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF [Y/c chinh sua]  if ${P4M_Button_PDTC=='P4M_Button_YCCS'}
+    sid-4B57430F-C15E-40DF-AAD8-C47F24499428 -> sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF [Y/C chinh sua]  if ${P4M_Button_PDTC=='P4M_Button_YCCS'}
+    sid-D310FEED-856A-4543-A324-4BF9F78671DC -> sid-66C0E154-5BE4-45E5-AD5A-5573CDDA449F
+    sid-D2729346-0BE8-491B-9A5A-7999DB106740 -> sid-D310FEED-856A-4543-A324-4BF9F78671DC
+    sid-66C0E154-5BE4-45E5-AD5A-5573CDDA449F -> sid-C23F28A8-D04A-46BF-B363-627E429E1171 [Remake]  if ${Button_4M_XL=='Button_4M_TT'}
+    sid-4B57430F-C15E-40DF-AAD8-C47F24499428 -> GMDuyetquaMail [Approve]  if ${P4M_Button_PDTC=='P4M_Button_PD'}
+    sid-ACF1BD51-79EA-42A8-9E5A-584E11BB7C5C -> sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF
+    sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF -> ManagerDuyetMail
+    ManagerDuyetMail -> ManagerApprove
+    sid-4672F8D2-5931-41CE-A39E-AFBB3E9658D9 -> sid-41DE9024-9EAB-43E4-9851-115516392E5D
+    sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4 -> sid-C23F28A8-D04A-46BF-B363-627E429E1171 [Approve]  if ${P4M_Button_PDTC=='P4M_Button_PD'}
+    sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4 -> sid-4672F8D2-5931-41CE-A39E-AFBB3E9658D9 [Reject]  if ${P4M_Button_PDTC=='P4M_Button_TC'}
+    sid-4B57430F-C15E-40DF-AAD8-C47F24499428 -> sid-4672F8D2-5931-41CE-A39E-AFBB3E9658D9 [Reject]  if ${P4M_Button_PDTC=='P4M_Button_TC'}
+    sid-66C0E154-5BE4-45E5-AD5A-5573CDDA449F -> sid-4672F8D2-5931-41CE-A39E-AFBB3E9658D9 [Cancel]  if ${Button_4M_XL=='Button_4M_KT'}
+    sid-C23F28A8-D04A-46BF-B363-627E429E1171 -> sid-8A0B4112-BA88-4710-BF15-5DBC3FBAEA8B
+    GMDuyetquaMail -> GeneralApprove
+
+################ PROCESS Process4MChangeResult – After 4M Change
+- [startEvent] sid-2D5793DE-D6D0-4C84-8927-9AC506A31149 "sid-2D5793DE-D6D0-4C84-8927-9AC506A31149"
+- [userTask] sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF "Input 4M Change Result"
+    
+assignee=${init}    formKey=P4MForm_Results_BTMV    dueDate=P7D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4MForm_Title:string, P4MForm_ProcessText:string, P4M_class:string, P4MForm_Situation:string, P4MForm_Detail:string, P4MForm_Purpose:string, P4MForm_ExpectedDate:date, P4M_ActualDate:date, P4MForm_HaveProb:enum, P4MForm_Content:string, P4MForm_Measure:string, P4MForm_NguoiDN:string …] (28)    doc='Creat 4M Form Change Result'
+- [userTask] sid-EB41ABE7-E323-45F8-B432-485F72EA988C "Check 4M Change Result"
+    
+assignee=${P4MForm_DonVi_DAI_DIEN}    formKey=P4MForm_Results_BTMV#P4M_Button_PDTC    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4MForm_Title:string, P4MForm_ProcessText:string, P4M_class:string, P4MForm_Situation:string, P4MForm_Detail:string, P4MForm_Purpose:string, P4MForm_ExpectedDate:date, P4M_ActualDate:date, P4MForm_HaveProb:enum, P4MForm_Content:string, P4MForm_Measure:string, P4MForm_NguoiDN:string …] (29)    doc='Originated Section Manager check 4M Change result'
+- [exclusiveGateway] sid-4B57430F-C15E-40DF-AAD8-C47F24499428 "sid-4B57430F-C15E-40DF-AAD8-C47F24499428"
+- [userTask] sid-5FB83087-5740-4E41-91C3-417B5213594E "Approve 4M Change Result"
+    
+assignee=${P4MForm_DonVi_LANH_DAO}    candidateGroups=lanhdao    formKey=P4MF_Results_BTMV_RV#P4M_Button_PDTC    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4MForm_Title:string, P4MForm_ProcessText:string, P4M_class:string, P4MForm_Situation:string, P4MForm_Detail:string, P4MForm_Purpose:string, P4MForm_ExpectedDate:date, P4M_ActualDate:date, P4MForm_HaveProb:enum, P4MForm_Content:string, P4MForm_Measure:string, P4MForm_NguoiDN:string …] (29)    doc='Originated Section GM approve 4M Change result'
+- [exclusiveGateway] sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4 "sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4"
+- [transaction] sid-C23F28A8-D04A-46BF-B363-627E429E1171 "sub process"
+    
+MULTI(seq=false, collection=P4M_PBXL_BMC_RS, elem=element_var, completion=)
+  - [startEvent] sid-238E87AF-984A-48B2-9BD4-3E6B59730D01 "sid-238E87AF-984A-48B2-9BD4-3E6B59730D01"
+  - [serviceTask] sid-C2C0930E-6032-45C5-A362-138ED2EF6191 "Get data"
+      
+  class=com.eform.servicetask.MultiInstanceProcessData
+  - [callActivity] sid-5340C041-20F4-4EBF-942D-0C9D0FD19B68 "Process steps in Relate Sections"
+      
+  calledElement=RelSecProcResult    in(${P4M_PBXL_PB_RS_DAI_DIEN}->init)    in(P4M_PBXL_BMC_RS@${loopCounter+1}->dataLoopPath)    out(${Button_4M_TPPC}->Button_4M_TPPC)
+  - [exclusiveGateway] sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D "sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D"
+  - [endEvent] sid-BD78F673-44BD-4AB6-82EF-BC4182DE5DD5 "sid-BD78F673-44BD-4AB6-82EF-BC4182DE5DD5"
+  - [endEvent] sid-7D4B8FF6-BC84-444E-ABFE-C15F42F0883C "sid-7D4B8FF6-BC84-444E-ABFE-C15F42F0883C"
+      
+  cancelEventDefinition
+  - [endEvent] sid-AA197883-B99B-4A8E-AE24-88AAF954179C "sid-AA197883-B99B-4A8E-AE24-88AAF954179C"
+      
+  errorEventDefinition
+- [endEvent] sid-41DE9024-9EAB-43E4-9851-115516392E5D "The END"
+- [userTask] print-finish "Review 4M Change Result"
+    
+assignee=${init}    formKey=P4MF_Results_BTMV_RV    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4MForm_Title:string, P4MForm_ProcessText:string, P4M_class:string, P4MForm_Situation:string, P4MForm_Detail:string, P4MForm_Purpose:string, P4MForm_ExpectedDate:date, P4M_ActualDate:date, P4MForm_HaveProb:enum, P4MForm_Content:string, P4MForm_Measure:string, P4MForm_NguoiDN:string …] (28)    doc='Xác nhận hoàn thành phê duyệt kết quả thực hiện 4M'
+- [boundaryEvent] sid-F7B6B723-F4AE-487A-B7ED-661A5E122EC9 "sid-F7B6B723-F4AE-487A-B7ED-661A5E122EC9"
+    
+attachedToRef=sid-C23F28A8-D04A-46BF-B363-627E429E1171    cancelActivity=false    cancelEventDefinition
+- [callActivity] sid-B1F8C4D1-E90D-4AA6-B091-44A3657F1B67 "Call 4M Process"
+    
+calledElement=Process4MChange    in(${P4MForm_NguoiDN}->init)
+- [userTask] sid-5B8186AB-B0B2-4CCE-A5F2-3BBB5FD895AF "General Director approve 4M Result"
+    
+assignee=Toshiaki.Matsushima    formKey=P4MF_Results_BTMV_RV#Button_4M_XL    dueDate=P3D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4MForm_Title:string, P4MForm_ProcessText:string, P4M_class:string, P4MForm_Situation:string, P4MForm_Detail:string, P4MForm_Purpose:string, P4MForm_ExpectedDate:date, P4M_ActualDate:date, P4MForm_HaveProb:enum, P4MForm_Content:string, P4MForm_Measure:string, P4MForm_NguoiDN:string …] (29)    doc='General Manager process reject'
+- [exclusiveGateway] sid-7797B9D4-DDC8-4C12-AB95-8319931A927F "sid-7797B9D4-DDC8-4C12-AB95-8319931A927F"
+- [boundaryEvent] sid-4E417BB4-FB36-4218-9547-1B6FD29A2D23 "sid-4E417BB4-FB36-4218-9547-1B6FD29A2D23"
+    
+attachedToRef=sid-C23F28A8-D04A-46BF-B363-627E429E1171    errorEventDefinition
+- [serviceTask] sid-4A0CA515-34FA-4420-8088-27C97F852639 "Reject"
+    
+class=com.eform.servicetask.CreateEmailRejectTask
+  FLOWS:
+    sid-2D5793DE-D6D0-4C84-8927-9AC506A31149 -> sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF
+    sid-EB41ABE7-E323-45F8-B432-485F72EA988C -> sid-4B57430F-C15E-40DF-AAD8-C47F24499428
+    sid-5FB83087-5740-4E41-91C3-417B5213594E -> sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4
+    sid-5340C041-20F4-4EBF-942D-0C9D0FD19B68 -> sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D
+    sid-C2C0930E-6032-45C5-A362-138ED2EF6191 -> sid-5340C041-20F4-4EBF-942D-0C9D0FD19B68
+    sid-238E87AF-984A-48B2-9BD4-3E6B59730D01 -> sid-C2C0930E-6032-45C5-A362-138ED2EF6191
+    sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D -> sid-BD78F673-44BD-4AB6-82EF-BC4182DE5DD5 [Approve]  if ${Button_4M_TPPC=='Button_4M_TPXL_PD'}
+    sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D -> sid-7D4B8FF6-BC84-444E-ABFE-C15F42F0883C [Reject]  if ${Button_4M_TPPC=='Button_4M_TPXL_TC'}
+    sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D -> sid-AA197883-B99B-4A8E-AE24-88AAF954179C [Update]  if ${Button_4M_TPPC=='Button_4M_TPXL_YCCS'}
+    sid-C23F28A8-D04A-46BF-B363-627E429E1171 -> print-finish
+    sid-4B57430F-C15E-40DF-AAD8-C47F24499428 -> sid-5FB83087-5740-4E41-91C3-417B5213594E [Approve]  if ${P4M_Button_PDTC=='P4M_Button_PD'}
+    sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4 -> sid-C23F28A8-D04A-46BF-B363-627E429E1171 [Approve]  if ${P4M_Button_PDTC=='P4M_Button_PD'}
+    sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4 -> sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF [Y/c chinh sua]  if ${P4M_Button_PDTC=='P4M_Button_YCCS'}
+    print-finish -> sid-41DE9024-9EAB-43E4-9851-115516392E5D
+    sid-5B8186AB-B0B2-4CCE-A5F2-3BBB5FD895AF -> sid-7797B9D4-DDC8-4C12-AB95-8319931A927F
+    sid-F7B6B723-F4AE-487A-B7ED-661A5E122EC9 -> sid-5B8186AB-B0B2-4CCE-A5F2-3BBB5FD895AF
+    sid-4A0CA515-34FA-4420-8088-27C97F852639 -> sid-41DE9024-9EAB-43E4-9851-115516392E5D
+    sid-4B57430F-C15E-40DF-AAD8-C47F24499428 -> sid-4A0CA515-34FA-4420-8088-27C97F852639 [Reject]  if ${P4M_Button_PDTC=='P4M_Button_TC'}
+    sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4 -> sid-4A0CA515-34FA-4420-8088-27C97F852639 [Reject]  if ${P4M_Button_PDTC=='P4M_Button_TC'}
+    sid-7797B9D4-DDC8-4C12-AB95-8319931A927F -> sid-4A0CA515-34FA-4420-8088-27C97F852639 [Cancel]  if ${Button_4M_XL=='Button_4M_KT'}
+    sid-7797B9D4-DDC8-4C12-AB95-8319931A927F -> sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF [Continue]  if ${Button_4M_XL=='Button_4M_TT'}
+    sid-4E417BB4-FB36-4218-9547-1B6FD29A2D23 -> sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF
+    sid-4B57430F-C15E-40DF-AAD8-C47F24499428 -> sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF [Y/C chinh sua]  if ${P4M_Button_PDTC=='P4M_Button_YCCS'}
+    sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF -> sid-EB41ABE7-E323-45F8-B432-485F72EA988C
+
+################ PROCESS RelSecProc_2510 – Related Sections Approve  Before 4M Change
+- [startEvent] sid-69557C07-BD0E-485D-A2A4-78BC34AAF518 "sid-69557C07-BD0E-485D-A2A4-78BC34AAF518"
+- [userTask] ManagerCheckRequest "Approve 4M Change request"
+    
+assignee=${init}    formKey=P4M_PBXL#Button_4M_TPPC    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4M_PBXL_PB:string, P4M_RiskAsessmentDM:enum, P4M_Standardization:enum, P4M_Initial_Control:enum, P4M_Cancel:enum, P4M_CBXL_BMC_P4M_CBXL_CB:string, P4M_CBXL_BMC_P4M_CBXL_ND:string, Button_4M_TPPC:enum] (8)    doc='Related Section approve 4M Change request'
+- [exclusiveGateway] sid-73BF8B10-C964-475F-BE72-ECD51A503A6C "sid-73BF8B10-C964-475F-BE72-ECD51A503A6C"
+- [subProcess] sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F "subProcess"
+    
+MULTI(seq=false, collection=P4M_CBXL_BMC, elem=element_var, completion=)
+  - [startEvent] sid-E80E0A82-C397-43EE-B6DD-F09063B692EC "sid-E80E0A82-C397-43EE-B6DD-F09063B692EC"
+  - [serviceTask] sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C "Get data"
+      
+  class=com.eform.servicetask.MultiInstanceProcessData
+  - [userTask] sid-2C21CB23-CAD0-425B-A356-F306BA6438D8 "Staff check 4M Change request"
+      
+  assignee=${P4M_CBXL_CB}    formKey=P4M_CBXL    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4M_CBXL_CB:string, P4M_CBXL_ND:string] (2)    doc='Related Sections Staff check 4M Change request'
+  - [endEvent] sid-B1671398-E112-444E-859A-90A66003E09E "sid-B1671398-E112-444E-859A-90A66003E09E"
+- [exclusiveGateway] sid-DEE2F0CF-386A-45C2-B921-58282A43E49B "sid-DEE2F0CF-386A-45C2-B921-58282A43E49B"
+- [userTask] sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3 "Approve 4M Change request"
+    
+assignee=${init}    formKey=P4M_PBXL#Button_4M_TPPC    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4M_PBXL_PB:string, P4M_RiskAsessmentDM:enum, P4M_Standardization:enum, P4M_Initial_Control:enum, P4M_Cancel:enum, P4M_CBXL_BMC_P4M_CBXL_CB:string, P4M_CBXL_BMC_P4M_CBXL_ND:string, Button_4M_TPPC:enum] (8)    doc='Related Section approve 4M Change request'
+- [endEvent] sid-E1855242-2521-41E7-8693-EE725BC15235 "sid-E1855242-2521-41E7-8693-EE725BC15235"
+  FLOWS:
+    sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C -> sid-2C21CB23-CAD0-425B-A356-F306BA6438D8
+    sid-2C21CB23-CAD0-425B-A356-F306BA6438D8 -> sid-B1671398-E112-444E-859A-90A66003E09E
+    sid-E80E0A82-C397-43EE-B6DD-F09063B692EC -> sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C
+    ManagerCheckRequest -> sid-73BF8B10-C964-475F-BE72-ECD51A503A6C
+    sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F -> sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3
+    sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3 -> sid-DEE2F0CF-386A-45C2-B921-58282A43E49B
+    sid-73BF8B10-C964-475F-BE72-ECD51A503A6C -> sid-DEE2F0CF-386A-45C2-B921-58282A43E49B [Self-handing]  if ${Button_4M_TPPC!='Button_4M_TPXL_PC'}
+    sid-73BF8B10-C964-475F-BE72-ECD51A503A6C -> sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F [Assignment]  if ${Button_4M_TPPC=='Button_4M_TPXL_PC'}
+    sid-DEE2F0CF-386A-45C2-B921-58282A43E49B -> sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F [Assignment]  if ${Button_4M_TPPC=='Button_4M_TPXL_PC'}
+    sid-DEE2F0CF-386A-45C2-B921-58282A43E49B -> sid-E1855242-2521-41E7-8693-EE725BC15235 [Approve]  if ${Button_4M_TPPC!='Button_4M_TPXL_PC'}
+    sid-69557C07-BD0E-485D-A2A4-78BC34AAF518 -> ManagerCheckRequest
+
+################ PROCESS RelSecProcResult – Related Sections Approve After 4M Change
+- [startEvent] sid-69557C07-BD0E-485D-A2A4-78BC34AAF518 "sid-69557C07-BD0E-485D-A2A4-78BC34AAF518"
+- [userTask] sid-F1BB36A3-78A1-4D10-91B5-0BACB542AB09 "Approve 4M Change Result"
+    
+assignee=${init}    formKey=P4M_PBXL_RS#Button_4M_TPPC    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4M_PBXL_PB_RS:string, P4M_ResultsConfirm:string, P4M_Suggestions:string, P4M_CancelResults:enum, P4M_CBXL_BMC_RS_P4M_CBXL_CB_RS:string, P4M_CBXL_BMC_RS_P4M_CBXL_ND_RS:string] (6)    doc='Related section manager approve 4M Change result'
+- [exclusiveGateway] sid-73BF8B10-C964-475F-BE72-ECD51A503A6C "sid-73BF8B10-C964-475F-BE72-ECD51A503A6C"
+- [subProcess] sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F "subProcess"
+    
+MULTI(seq=false, collection=P4M_CBXL_BMC_RS, elem=element_var, completion=)
+  - [startEvent] sid-E80E0A82-C397-43EE-B6DD-F09063B692EC "sid-E80E0A82-C397-43EE-B6DD-F09063B692EC"
+  - [serviceTask] sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C "Get data"
+      
+  class=com.eform.servicetask.MultiInstanceProcessData
+  - [userTask] sid-2C21CB23-CAD0-425B-A356-F306BA6438D8 "RS Staff check 4M Result"
+      
+  assignee=${P4M_CBXL_CB_RS}    formKey=P4M_CBXL_RS    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4M_CBXL_CB_RS:string, P4M_CBXL_ND_RS:string] (2)    doc='RS Staff check 4M Change Result'
+  - [endEvent] sid-B1671398-E112-444E-859A-90A66003E09E "sid-B1671398-E112-444E-859A-90A66003E09E"
+- [exclusiveGateway] sid-DEE2F0CF-386A-45C2-B921-58282A43E49B "sid-DEE2F0CF-386A-45C2-B921-58282A43E49B"
+- [userTask] sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3 "Approve 4M Change Result"
+    
+assignee=${init}    formKey=P4M_PBXL_RS#Button_4M_TPPC    dueDate=P2D    priority=1    taskListener(create:com.eform.activiti.listener.MailNotificationListener)    formProps[P4M_PBXL_PB_RS:string, P4M_ResultsConfirm:string, P4M_Suggestions:string, P4M_CancelResults:enum, P4M_CBXL_BMC_RS_P4M_CBXL_CB_RS:string, P4M_CBXL_BMC_RS_P4M_CBXL_ND_RS:string] (6)    doc='Related section manager approve 4M Change result'
+- [endEvent] sid-E1855242-2521-41E7-8693-EE725BC15235 "sid-E1855242-2521-41E7-8693-EE725BC15235"
+  FLOWS:
+    sid-69557C07-BD0E-485D-A2A4-78BC34AAF518 -> sid-F1BB36A3-78A1-4D10-91B5-0BACB542AB09
+    sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C -> sid-2C21CB23-CAD0-425B-A356-F306BA6438D8
+    sid-2C21CB23-CAD0-425B-A356-F306BA6438D8 -> sid-B1671398-E112-444E-859A-90A66003E09E
+    sid-E80E0A82-C397-43EE-B6DD-F09063B692EC -> sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C
+    sid-F1BB36A3-78A1-4D10-91B5-0BACB542AB09 -> sid-73BF8B10-C964-475F-BE72-ECD51A503A6C
+    sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F -> sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3
+    sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3 -> sid-DEE2F0CF-386A-45C2-B921-58282A43E49B
+    sid-73BF8B10-C964-475F-BE72-ECD51A503A6C -> sid-DEE2F0CF-386A-45C2-B921-58282A43E49B [Self-handing]  if ${Button_4M_TPPC!='Button_4M_TPXL_PC'}
+    sid-73BF8B10-C964-475F-BE72-ECD51A503A6C -> sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F [Assignment]  if ${Button_4M_TPPC=='Button_4M_TPXL_PC'}
+    sid-DEE2F0CF-386A-45C2-B921-58282A43E49B -> sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F [Assignment]  if ${Button_4M_TPPC=='Button_4M_TPXL_PC'}
+    sid-DEE2F0CF-386A-45C2-B921-58282A43E49B -> sid-E1855242-2521-41E7-8693-EE725BC15235 [Approve]  if ${Button_4M_TPPC!='Button_4M_TPXL_PC'}

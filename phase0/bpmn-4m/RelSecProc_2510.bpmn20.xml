@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
+  <process id="RelSecProc_2510" name="Related Sections Approve  Before 4M Change" isExecutable="true">
+    <documentation>Related Sections approve 4M Change request</documentation>
+    <startEvent id="sid-69557C07-BD0E-485D-A2A4-78BC34AAF518" activiti:initiator="init"></startEvent>
+    <userTask id="ManagerCheckRequest" name="Approve 4M Change request" activiti:assignee="${init}" activiti:dueDate="P2D" activiti:formKey="P4M_PBXL#Button_4M_TPPC" activiti:priority="1">
+      <documentation>Related Section approve 4M Change request</documentation>
+      <extensionElements>
+        <activiti:formProperty id="P4M_PBXL_PB" name="Phòng ban xử lý  " type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4M_RiskAsessmentDM" name="Risk Asessment" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4M_Standardization" name="Standardization needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4M_Initial_Control" name="initial control needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4M_Cancel" name="Cancel 4M Change" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4M_CBXL_BMC_P4M_CBXL_CB" name="Can bo xu ly" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4M_CBXL_BMC_P4M_CBXL_ND" name="Noi dung can bo xy ly" type="string"></activiti:formProperty>
+        <activiti:formProperty id="Button_4M_TPPC" name="4M- Trưởng phòng  Related Sections phê duyệt" type="enum">
+          <activiti:value id="Button_4M_TPXL_PD" name="Approve"></activiti:value>
+          <activiti:value id="Button_4M_TPXL_TC" name="Reject"></activiti:value>
+          <activiti:value id="Button_4M_TPXL_PC" name="Assign to staff"></activiti:value>
+          <activiti:value id="Button_4M_TPXL_YCCS" name="Update"></activiti:value>
+        </activiti:formProperty>
+        <activiti:taskListener event="create" class="com.eform.activiti.listener.MailNotificationListener"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="sid-73BF8B10-C964-475F-BE72-ECD51A503A6C"></exclusiveGateway>
+    <subProcess id="sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F" name="subProcess">
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="P4M_CBXL_BMC" activiti:elementVariable="element_var"></multiInstanceLoopCharacteristics>
+      <startEvent id="sid-E80E0A82-C397-43EE-B6DD-F09063B692EC"></startEvent>
+      <serviceTask id="sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C" name="Get data" activiti:class="com.eform.servicetask.MultiInstanceProcessData"></serviceTask>
+      <userTask id="sid-2C21CB23-CAD0-425B-A356-F306BA6438D8" name="Staff check 4M Change request" activiti:assignee="${P4M_CBXL_CB}" activiti:dueDate="P2D" activiti:formKey="P4M_CBXL" activiti:priority="1">
+        <documentation>Related Sections Staff check 4M Change request</documentation>
+        <extensionElements>
+          <activiti:formProperty id="P4M_CBXL_CB" name="Can bo xu ly" type="string"></activiti:formProperty>
+          <activiti:formProperty id="P4M_CBXL_ND" name="Noi dung can bo xy ly" type="string"></activiti:formProperty>
+          <activiti:taskListener event="create" class="com.eform.activiti.listener.MailNotificationListener"></activiti:taskListener>
+        </extensionElements>
+      </userTask>
+      <endEvent id="sid-B1671398-E112-444E-859A-90A66003E09E"></endEvent>
+      <sequenceFlow id="sid-B5C7E6DB-63A5-407C-A9B9-A93758E6B121" sourceRef="sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C" targetRef="sid-2C21CB23-CAD0-425B-A356-F306BA6438D8"></sequenceFlow>
+      <sequenceFlow id="sid-7CFD2BB2-557B-4E47-ADCF-BAF81F9001E4" sourceRef="sid-2C21CB23-CAD0-425B-A356-F306BA6438D8" targetRef="sid-B1671398-E112-444E-859A-90A66003E09E"></sequenceFlow>
+      <sequenceFlow id="sid-F426B7A6-D9E4-4834-8531-49A71ABF6983" sourceRef="sid-E80E0A82-C397-43EE-B6DD-F09063B692EC" targetRef="sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C"></sequenceFlow>
+    </subProcess>
+    <sequenceFlow id="sid-57F88252-5774-451C-9715-EDFEB28C0F10" sourceRef="ManagerCheckRequest" targetRef="sid-73BF8B10-C964-475F-BE72-ECD51A503A6C"></sequenceFlow>
+    <exclusiveGateway id="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B"></exclusiveGateway>
+    <userTask id="sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3" name="Approve 4M Change request" activiti:assignee="${init}" activiti:dueDate="P2D" activiti:formKey="P4M_PBXL#Button_4M_TPPC" activiti:priority="1">
+      <documentation>Related Section approve 4M Change request</documentation>
+      <extensionElements>
+        <activiti:formProperty id="P4M_PBXL_PB" name="Phòng ban xử lý  " type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4M_RiskAsessmentDM" name="Risk Asessment" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4M_Standardization" name="Standardization needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4M_Initial_Control" name="initial control needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4M_Cancel" name="Cancel 4M Change" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4M_CBXL_BMC_P4M_CBXL_CB" name="Can bo xu ly" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4M_CBXL_BMC_P4M_CBXL_ND" name="Noi dung can bo xy ly" type="string"></activiti:formProperty>
+        <activiti:formProperty id="Button_4M_TPPC" name="4M- Trưởng phòng  Related Sections phê duyệt" type="enum">
+          <activiti:value id="Button_4M_TPXL_PD" name="Approve"></activiti:value>
+          <activiti:value id="Button_4M_TPXL_TC" name="Reject"></activiti:value>
+          <activiti:value id="Button_4M_TPXL_PC" name="Assign to staff"></activiti:value>
+          <activiti:value id="Button_4M_TPXL_YCCS" name="Update"></activiti:value>
+        </activiti:formProperty>
+        <activiti:taskListener event="create" class="com.eform.activiti.listener.MailNotificationListener"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-FBB1F66D-377E-42A8-9E8F-BB400406A62F" sourceRef="sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F" targetRef="sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3"></sequenceFlow>
+    <sequenceFlow id="sid-80CE2D9E-DBED-4E10-BCFB-81A372AFE9F5" sourceRef="sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3" targetRef="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B"></sequenceFlow>
+    <endEvent id="sid-E1855242-2521-41E7-8693-EE725BC15235"></endEvent>
+    <sequenceFlow id="sid-325650D7-00AA-49AD-B53D-EDE3D86CF2AF" name="Self-handing" sourceRef="sid-73BF8B10-C964-475F-BE72-ECD51A503A6C" targetRef="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_TPPC!='Button_4M_TPXL_PC'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-C14DD54B-89C6-4D0C-8717-0170A0865409" name="Assignment" sourceRef="sid-73BF8B10-C964-475F-BE72-ECD51A503A6C" targetRef="sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_TPPC=='Button_4M_TPXL_PC'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-2B78CD15-1132-421E-A72E-F84D91A8D1FA" name="Assignment" sourceRef="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B" targetRef="sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_TPPC=='Button_4M_TPXL_PC'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-0B51FCB3-EE62-4F45-8D00-8625CBAC136D" name="Approve" sourceRef="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B" targetRef="sid-E1855242-2521-41E7-8693-EE725BC15235">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_TPPC!='Button_4M_TPXL_PC'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-12D37713-EE7B-49F8-B7CD-22A665CDF4C8" sourceRef="sid-69557C07-BD0E-485D-A2A4-78BC34AAF518" targetRef="ManagerCheckRequest"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_RelSecProc_2510">
+    <bpmndi:BPMNPlane bpmnElement="RelSecProc_2510" id="BPMNPlane_RelSecProc_2510">
+      <bpmndi:BPMNShape bpmnElement="sid-69557C07-BD0E-485D-A2A4-78BC34AAF518" id="BPMNShape_sid-69557C07-BD0E-485D-A2A4-78BC34AAF518">
+        <omgdc:Bounds height="30.0" width="30.0" x="30.0" y="55.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ManagerCheckRequest" id="BPMNShape_ManagerCheckRequest">
+        <omgdc:Bounds height="80.0" width="100.0" x="150.0" y="15.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-73BF8B10-C964-475F-BE72-ECD51A503A6C" id="BPMNShape_sid-73BF8B10-C964-475F-BE72-ECD51A503A6C">
+        <omgdc:Bounds height="40.0" width="40.0" x="300.0" y="45.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F" id="BPMNShape_sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F">
+        <omgdc:Bounds height="163.0" width="355.0" x="360.0" y="120.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-E80E0A82-C397-43EE-B6DD-F09063B692EC" id="BPMNShape_sid-E80E0A82-C397-43EE-B6DD-F09063B692EC">
+        <omgdc:Bounds height="30.0" width="30.0" x="375.0" y="135.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C" id="BPMNShape_sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C">
+        <omgdc:Bounds height="80.0" width="100.0" x="390.0" y="180.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-2C21CB23-CAD0-425B-A356-F306BA6438D8" id="BPMNShape_sid-2C21CB23-CAD0-425B-A356-F306BA6438D8">
+        <omgdc:Bounds height="80.0" width="100.0" x="510.0" y="165.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-B1671398-E112-444E-859A-90A66003E09E" id="BPMNShape_sid-B1671398-E112-444E-859A-90A66003E09E">
+        <omgdc:Bounds height="28.0" width="28.0" x="655.0" y="206.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B" id="BPMNShape_sid-DEE2F0CF-386A-45C2-B921-58282A43E49B">
+        <omgdc:Bounds height="40.0" width="40.0" x="840.0" y="45.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3" id="BPMNShape_sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3">
+        <omgdc:Bounds height="80.0" width="100.0" x="780.0" y="120.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-E1855242-2521-41E7-8693-EE725BC15235" id="BPMNShape_sid-E1855242-2521-41E7-8693-EE725BC15235">
+        <omgdc:Bounds height="28.0" width="28.0" x="925.0" y="51.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-2B78CD15-1132-421E-A72E-F84D91A8D1FA" id="BPMNEdge_sid-2B78CD15-1132-421E-A72E-F84D91A8D1FA">
+        <omgdi:waypoint x="845.9477124183006" y="70.94771241830065"></omgdi:waypoint>
+        <omgdi:waypoint x="715.0" y="126.37209302325581"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-12D37713-EE7B-49F8-B7CD-22A665CDF4C8" id="BPMNEdge_sid-12D37713-EE7B-49F8-B7CD-22A665CDF4C8">
+        <omgdi:waypoint x="60.0" y="70.0"></omgdi:waypoint>
+        <omgdi:waypoint x="105.0" y="70.0"></omgdi:waypoint>
+        <omgdi:waypoint x="105.0" y="55.0"></omgdi:waypoint>
+        <omgdi:waypoint x="150.0" y="55.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-80CE2D9E-DBED-4E10-BCFB-81A372AFE9F5" id="BPMNEdge_sid-80CE2D9E-DBED-4E10-BCFB-81A372AFE9F5">
+        <omgdi:waypoint x="842.6315789473684" y="120.0"></omgdi:waypoint>
+        <omgdi:waypoint x="855.2" y="80.2"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-F426B7A6-D9E4-4834-8531-49A71ABF6983" id="BPMNEdge_sid-F426B7A6-D9E4-4834-8531-49A71ABF6983">
+        <omgdi:waypoint x="398.71857290578646" y="162.20600206810101"></omgdi:waypoint>
+        <omgdi:waypoint x="411.42857142857144" y="180.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-FBB1F66D-377E-42A8-9E8F-BB400406A62F" id="BPMNEdge_sid-FBB1F66D-377E-42A8-9E8F-BB400406A62F">
+        <omgdi:waypoint x="715.0" y="201.0763723150358"></omgdi:waypoint>
+        <omgdi:waypoint x="747.0" y="201.0"></omgdi:waypoint>
+        <omgdi:waypoint x="747.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="780.0" y="160.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-0B51FCB3-EE62-4F45-8D00-8625CBAC136D" id="BPMNEdge_sid-0B51FCB3-EE62-4F45-8D00-8625CBAC136D">
+        <omgdi:waypoint x="880.0" y="65.0"></omgdi:waypoint>
+        <omgdi:waypoint x="925.0" y="65.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-57F88252-5774-451C-9715-EDFEB28C0F10" id="BPMNEdge_sid-57F88252-5774-451C-9715-EDFEB28C0F10">
+        <omgdi:waypoint x="250.0" y="59.16666666666667"></omgdi:waypoint>
+        <omgdi:waypoint x="301.53846153846155" y="63.46153846153846"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-325650D7-00AA-49AD-B53D-EDE3D86CF2AF" id="BPMNEdge_sid-325650D7-00AA-49AD-B53D-EDE3D86CF2AF">
+        <omgdi:waypoint x="340.0" y="65.0"></omgdi:waypoint>
+        <omgdi:waypoint x="840.0" y="65.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-7CFD2BB2-557B-4E47-ADCF-BAF81F9001E4" id="BPMNEdge_sid-7CFD2BB2-557B-4E47-ADCF-BAF81F9001E4">
+        <omgdi:waypoint x="610.0" y="205.0"></omgdi:waypoint>
+        <omgdi:waypoint x="632.5" y="205.0"></omgdi:waypoint>
+        <omgdi:waypoint x="632.5" y="220.0"></omgdi:waypoint>
+        <omgdi:waypoint x="655.0" y="220.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B5C7E6DB-63A5-407C-A9B9-A93758E6B121" id="BPMNEdge_sid-B5C7E6DB-63A5-407C-A9B9-A93758E6B121">
+        <omgdi:waypoint x="490.0" y="213.75"></omgdi:waypoint>
+        <omgdi:waypoint x="510.0" y="211.25"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-C14DD54B-89C6-4D0C-8717-0170A0865409" id="BPMNEdge_sid-C14DD54B-89C6-4D0C-8717-0170A0865409">
+        <omgdi:waypoint x="320.0" y="85.0"></omgdi:waypoint>
+        <omgdi:waypoint x="320.0" y="201.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="201.0919540229885"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

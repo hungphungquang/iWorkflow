@@ -1,0 +1,110 @@
+SET
+SET
+ open_total | abandoned_gt_1y | top_level | sub_process | oldest_started | newest_last_activity 
+------------+-----------------+-----------+-------------+----------------+----------------------
+       8318 |            5795 |      5548 |         247 | 2019-06-10     | 2025-11-01
+
+          process_key           |                      process_name                       | abandoned | on_old_version | oldest_started | newest_last_activity | avg_idle_days 
+--------------------------------+---------------------------------------------------------+-----------+----------------+----------------+----------------------+---------------
+ Operational_Request_Form       | Operational Request Form                                |      2472 |              6 | 2022-07-07     | 2025-11-01           |           923
+ Uniform_Request                | REQUEST PROVIDING COMPANY UNIFORM                       |      1532 |            803 | 2023-02-16     | 2025-10-31           |           798
+ Process4MChange                | Before 4M Change                                        |       323 |            305 | 2019-06-10     | 2025-10-23           |          1308
+ SanctionProcess                | SanctionSheet Online                                    |       249 |            249 | 2022-09-20     | 2025-10-30           |           772
+ VMEC_Kaizen                    | VMEC Improvement request                                |       218 |            218 | 2021-12-24     | 2025-10-31           |           834
+ QCCD_QV_Activity               | QCCD QV Activity                                        |       162 |             16 | 2021-07-31     | 2025-07-28           |          1353
+ Laptop_Takeout                 | Take-out Laptop/ Important Information Application Form |       133 |             31 | 2023-04-07     | 2025-10-22           |           819
+ KYTProcess                     | 4R KYT Monthly                                          |       115 |             45 | 2021-03-04     | 2025-07-17           |          1670
+ LocalStdProcess                | Local STD Review                                        |        88 |              9 | 2021-09-16     | 2025-10-31           |           574
+ WS_assessment                  | Work Standard Deliberation                              |        39 |             39 | 2023-04-20     | 2025-10-25           |          1006
+ IT_Equipment_Confirmation      | IT Equipment Confirmation Form                          |        33 |              0 | 2023-08-09     | 2025-10-13           |           931
+ QCCD_SV_Activity               | QCCD SV Activity                                        |        29 |              0 | 2021-08-16     | 2025-10-24           |          1053
+ QCCD_CV_Activity               | QCCD CV Activity                                        |        25 |              0 | 2021-08-20     | 2024-09-22           |          1316
+ Abnormal_Mixed_Compound        | Notification and Decision for Abnormal Mixed Compound   |        23 |             11 | 2023-12-27     | 2025-10-15           |           640
+ Transport_Allowance            | Transportation allowance Application Approval Form      |        22 |             22 | 2024-03-27     | 2025-10-22           |           684
+ CHANGING_OF_WORKING_SHIFTGROUP | CHANGING OF WORKING SHIFTGROUP                          |        22 |              0 | 2023-06-08     | 2024-06-17           |          1045
+ Uniform_FanJacket_Request      | Request Providing Fan Jacket                            |        17 |              0 | 2025-05-29     | 2025-10-29           |           468
+ HR_Attendance                  | HR Attendance Confirmation                              |        11 |              0 | 2023-06-08     | 2024-06-13           |          1026
+ RelSecProc_2510                | Related Sections Approve  Before 4M Change              |         8 |              3 | 2023-01-06     | 2025-07-31           |          1013
+ SubMeal_Request                | Overtime Sub-Meal Registration                          |         7 |              0 | 2023-06-15     | 2024-03-22           |          1109
+ CDS_Process                    | CDS Process                                             |         6 |              1 | 2025-06-11     | 2025-06-26           |           499
+ Document_Deliberation          | Request Of Document Deliberation                        |         6 |              6 | 2025-03-19     | 2025-09-17           |           504
+ Non_conformance                | Informing About Non-Conformance Of Equipment Form       |         3 |              2 | 2023-08-09     | 2024-01-15           |          1076
+ RelSecProcResult               | Related Sections Approve After 4M Change                |         3 |              1 | 2025-04-27     | 2025-04-27           |           554
+ Process4MChangeResult          | After 4M Change                                         |         2 |              2 | 2023-02-09     | 2023-08-02           |          1275
+
+ year_started | abandoned 
+--------------+-----------
+         2019 |        33
+         2020 |        23
+         2021 |       136
+         2022 |       426
+         2023 |      1585
+         2024 |      1625
+         2025 |      1720
+
+        process_key        |                         current_step                         | abandoned 
+---------------------------+--------------------------------------------------------------+-----------
+ Operational_Request_Form  | PIC xác nhận kết quả sau khi thực hiện                       |      2202
+ Uniform_Request           | Requester confirm Providing Company Uniform Request          |      1153
+ Uniform_Request           | Create Providing Company Uniform Request                     |       367
+ Operational_Request_Form  | PIC tạo yêu cầu xử lý                                        |       145
+ SanctionProcess           | PIC confirm status of Sanction sheet                         |       136
+ Process4MChange           | Create 4M Change request                                     |       112
+ Process4MChange           | Input 4M Change Result                                       |       106
+ QCCD_QV_Activity          | QV input NG Content                                          |        98
+ Operational_Request_Form  | Phê duyệt kết quả sau khi thực hiện                          |        87
+ KYTProcess                | Create KYT Form                                              |        83
+ SanctionProcess           | Create SanctionSheet request                                 |        82
+ VMEC_Kaizen               | Create Improvement Request                                   |        81
+ Laptop_Takeout            | Input Return Information                                     |        73
+ VMEC_Kaizen               | Input improvement result                                     |        72
+ Laptop_Takeout            | Create Laptop Take-out Form                                  |        41
+ Operational_Request_Form  | Phê duyệt yêu cầu xử lý                                      |        37
+ WS_assessment             | Tạo bản thẩm định TCTT                                       |        36
+ QCCD_QV_Activity          | Section Foreman receive QV detection                         |        35
+ Process4MChange           | (không có task mở)                                           |        34
+ LocalStdProcess           | QA Issuer create Local Standard Review request               |        31
+ VMEC_Kaizen               | Kaizen team check improvement result                         |        31
+ IT_Equipment_Confirmation | Create IT Equipment Confirmation Form                        |        30
+ QCCD_QV_Activity          | Supervisor confirm                                           |        29
+ Process4MChange           | Approve 4M Change request                                    |        26
+ LocalStdProcess           | Supervisor check Local Standard Review request               |        24
+ KYTProcess                | Check KYT Form                                               |        22
+ LocalStdProcess           | QA Issuer review Local Standard Request                      |        21
+ QCCD_CV_Activity          | Input NG Content                                             |        21
+ Abnormal_Mixed_Compound   | Create Notification and Decision for Abnormal Mixed Compound |        21
+ Process4MChange           | Review 4M Change Result                                      |        21
+
+                assignee                 | abandoned_cases 
+-----------------------------------------+-----------------
+ huy.lethanhviet                         |             731
+ Tien.PhamXuan                           |             700
+ hiep.nguyenduc                          |             569
+ hao.doanthi                             |             449
+ huong.dothi                             |             144
+ Khuyen.BuiThi                           |             133
+ long.hoang                              |             126
+ an.vuthi                                |             116
+ hien.phamthuy                           |              67
+ huu.buivan                              |              55
+ hoa.trinhthanh                          |              52
+ cham.buithi                             |              52
+ hau.phamvan                             |              51
+ tuan.maivan                             |              50
+ (chưa giao – chỉ có nhóm/không có task) |              49
+ hoa.phamminh                            |              48
+ hung.letien                             |              48
+ sang.buivan                             |              42
+ trung.phamsy                            |              42
+ anh.ltv                                 |              38
+ tung.tranvan                            |              37
+ khuong.chuduc                           |              36
+ hoang.nguyenhuy                         |              34
+ quyet.phamduy                           |              34
+ bien.vuvan                              |              32
+ Phuong.DaoThi                           |              31
+ Hai.HoangDuc                            |              30
+ hoang.maidac                            |              30
+ giang.nth                               |              28
+ yen.tth                                 |              28
+

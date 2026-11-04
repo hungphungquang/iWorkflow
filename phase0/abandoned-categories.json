@@ -1,0 +1,109 @@
+{
+ "total": {
+  "A": 1128,
+  "D": 512,
+  "B": 3874,
+  "C": 34
+ },
+ "per_process": {
+  "Operational_Request_Form": {
+   "A": 145,
+   "D": 38,
+   "B": 2289
+  },
+  "Uniform_Request": {
+   "A": 367,
+   "B": 1153,
+   "D": 12
+  },
+  "Process4MChange": {
+   "A": 118,
+   "D": 44,
+   "C": 34,
+   "B": 127
+  },
+  "SanctionProcess": {
+   "A": 82,
+   "B": 157,
+   "D": 10
+  },
+  "VMEC_Kaizen": {
+   "D": 65,
+   "A": 81,
+   "B": 72
+  },
+  "QCCD_QV_Activity": {
+   "D": 162
+  },
+  "Laptop_Takeout": {
+   "B": 73,
+   "D": 19,
+   "A": 41
+  },
+  "KYTProcess": {
+   "A": 83,
+   "D": 32
+  },
+  "LocalStdProcess": {
+   "A": 36,
+   "D": 52
+  },
+  "WS_assessment": {
+   "A": 36,
+   "D": 3
+  },
+  "IT_Equipment_Confirmation": {
+   "A": 30,
+   "D": 3
+  },
+  "QCCD_SV_Activity": {
+   "D": 29
+  },
+  "QCCD_CV_Activity": {
+   "D": 25
+  },
+  "Abnormal_Mixed_Compound": {
+   "A": 21,
+   "D": 2
+  },
+  "CHANGING_OF_WORKING_SHIFTGROUP": {
+   "D": 1,
+   "A": 21
+  },
+  "Transport_Allowance": {
+   "A": 21,
+   "D": 1
+  },
+  "Uniform_FanJacket_Request": {
+   "A": 15,
+   "B": 1,
+   "D": 1
+  },
+  "HR_Attendance": {
+   "A": 11
+  },
+  "RelSecProc_2510": {
+   "D": 8
+  },
+  "SubMeal_Request": {
+   "A": 7
+  },
+  "CDS_Process": {
+   "A": 6
+  },
+  "Document_Deliberation": {
+   "A": 5,
+   "D": 1
+  },
+  "Non_conformance": {
+   "D": 1,
+   "A": 2
+  },
+  "RelSecProcResult": {
+   "D": 3
+  },
+  "Process4MChangeResult": {
+   "B": 2
+  }
+ }
+}

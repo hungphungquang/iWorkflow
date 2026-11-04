@@ -255,6 +255,8 @@ Tài nguyên: `templates/` (Thymeleaf), `public/` & `static/` (JS/CSS/ảnh, nhi
 | 11 | Thấp | `spring.jpa.hibernate.ddl-auto=update` trên prod – Hibernate tự sửa schema | `application.properties` |
 | 12 | Thấp | File rác trong build: `*.rej`, `.swp`, process demo Activiti, controller test WebSocket, nhiều `eform.jar.backup*` trên server | jar / server |
 | 13 | Thấp | Đường dẫn Windows `D:\I-Work\Image_Upload\` trong cấu hình prod | `user.image.sign` |
+| 14 | Cao | **Đã xác nhận:** đặt `HT_THAM_SO.REMOVE_ALL_DATA = '@123'` sẽ hiện nút "xóa dữ liệu" trên màn hình tham số; bấm nút xóa **toàn bộ** process instance, lịch sử và deployment (không xác nhận, không audit). Hiện prod không bật | `HtThamSoDetailView` |
+| 15 | TB | Mật khẩu tài khoản dịch vụ LDAP (`LDAP_PASS`) và SMB (`REMOTE_PASS`) lưu dạng rõ trong bảng `HT_THAM_SO` | DB `iw_prod` |
 
 ---
 

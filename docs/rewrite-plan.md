@@ -1,6 +1,8 @@
 # Kế hoạch viết lại iWorkflow – Next.js + Java/Flowable
 
 > Đầu vào: [iworkflow-project-overview.md](iworkflow-project-overview.md) và mã nguồn decompile tại [analysis/src/](../analysis/src/) (608 class, ~84k LOC).
+> So sánh với nền tảng BPMN/best practice và đề xuất bổ sung core function: [bpm-gap-analysis.md](bpm-gap-analysis.md).
+> **Ưu tiên frontend – đã chốt 04/11/2026:** tách lộ trình UI và engine (F1 → F2 → đổi engine), xem [frontend-first-roadmap.md](frontend-first-roadmap.md). Mục 7, 9, 14 và 15 dưới đây đã cập nhật theo quyết định này.
 > **Đã chốt với chủ dự án:**
 > 1. Phase 1 viết lại toàn bộ ứng dụng, **giữ nguyên schema & dữ liệu PostgreSQL hiện tại**; thiết kế lại DB ở **Phase 2**.
 > 2. **Rust không bắt buộc** → chọn stack theo rủi ro thấp nhất (mục 3).
@@ -107,7 +109,7 @@ flowchart LR
 | Tích hợp | SOAP: Spring WebServices/RestClient; SMB: smbj qua adapter có allow-list |
 | Frontend | **Next.js (App Router) + React + TypeScript**, TanStack Query, Tailwind + shadcn/ui, react-hook-form + zod, TanStack Table |
 | UI chuyên biệt | bpmn-js (modeler/viewer), ECharts/Recharts (báo cáo), TipTap (thay CKEditor), WebSocket/SSE cho thông báo & chat |
-| i18n | `next-intl` (vi/en, chuyển từ `messages*.properties`) |
+| i18n | `next-intl`; bản đầu chỉ tiếng Việt, tiếng Anh ở phase sau (chuỗi tham khảo từ `messages*.properties`) |
 | Test | JUnit 5 + Testcontainers Postgres + Flowable test utilities; FE: Vitest + Playwright; contract test theo OpenAPI |
 | Vận hành | Container (Podman/Docker) hoặc systemd trên AlmaLinux, nginx TLS, CI build + scan (OWASP Dependency-Check/Trivy, `pnpm audit`) |
 
@@ -197,6 +199,7 @@ flowchart LR
 - `public.ACT_*` (Activiti 5): hệ mới **chỉ đọc**; hệ cũ vẫn ghi cho đến khi drain xong.
 - Người dùng/nhóm: xác thực qua AD; thuộc tính mở rộng vẫn đọc/ghi `public.act_id_info` (dùng 122 chỗ) qua adapter riêng để Phase 2 thay bằng bảng mới.
 - Mật khẩu/secret trong `HT_THAM_SO` (`MAIL_PASSWORD`, `LDAP_PASS`, `REMOTE_PASS`): chuyển ra secret store, xóa giá trị trong DB khi cutover.
+- **File đính kèm** (22 GB đang nằm trong `act_ge_bytearray`): hệ mới đọc file cũ từ DB qua adapter; file mới lưu ngoài DB (filesystem/MinIO S3-compatible) + bảng metadata `iw2_file`, không dùng attachment lưu blob của Flowable.
 - Toàn bộ truy cập schema cũ qua repository/adapter → Phase 2 chỉ phải sửa lớp này.
 
 ### Phase 2 – thiết kế lại DB
@@ -204,11 +207,20 @@ flowchart LR
 - Hồ sơ: chuyển `hoSoGiaTri` XML → `jsonb` có schema, index GIN cho tìm kiếm.
 - Workflow: archive `public.ACT_*` của Activiti 5 (sau khi drain) thành bảng lịch sử chỉ đọc hoặc import vào history Flowable; xóa bảng runtime cũ.
 - `act_id_info` (key/value thuộc tính user, dùng 122 chỗ) → bảng `user_profile` có cột rõ ràng.
+- Chuyển 22 GB file đính kèm từ `act_ge_bytearray` ra file storage (giữ ID/checksum), dọn ~1 GB blob mồ côi và log email cũ → DB còn vài GB.
 - Migration có kiểm chứng: đếm bản ghi, checksum, chạy song song đọc so sánh.
 
 ---
 
 ## 7. Chiến lược chuyển đổi (strangler, chạy song song)
+
+> **Cập nhật 04/11/2026:** thứ tự chuyển đổi đổi theo [frontend-first-roadmap.md](frontend-first-roadmap.md):
+> 1. **Giai đoạn A (F1):** hệ mới chỉ đọc (dashboard, inbox hợp nhất, tra cứu). Nút "Xử lý" mở màn hình Vaadin cũ.
+> 2. **Giai đoạn B (F2):** UI mới xử lý task cho **mọi quy trình cùng lúc**, trên engine Activiti 5 nhúng trong API mới và cùng bảng `public.ACT_*`. Không chuyển theo từng process key, không drain. Điều kiện: spike ở mục 7 của roadmap đạt.
+> 3. **Giai đoạn C:** tạo hồ sơ, form designer, quản trị trên hệ mới; tắt UI Vaadin.
+> 4. **Giai đoạn D:** đổi engine sang Flowable (nâng cấp `ACT_*` tại chỗ, hoặc dùng chiến lược dưới đây).
+>
+> Sơ đồ và các bước dưới đây là **phương án dự phòng** (F3), dùng nếu spike F2 không đạt hoặc nếu giai đoạn D chọn chạy Flowable trên schema riêng.
 
 ```mermaid
 flowchart LR
@@ -238,6 +250,19 @@ flowchart LR
 ---
 
 ## 9. Lộ trình
+
+### 9.1 Lộ trình đã chốt (04/11/2026)
+
+| Giai đoạn | Nội dung | Người dùng nhận được | Tiêu chí hoàn thành | Độ lớn |
+|---|---|---|---|---|
+| **0. Khảo sát & spike** | Đã chạy khảo sát prod (mục 10.2). Còn lại: baseline hiệu năng hệ cũ; **spike Activiti 5 nhúng trong API mới** (roadmap mục 7); spike ký PDF, Word→PDF, LDAP | ADR kiến trúc, kết quả spike | Spike F2 đạt hoặc quyết định quay về F3 | M |
+| **A. Nền tảng + đọc** | Như Phase 1a + 1b bên dưới, tập trung **người xử lý và quản lý**: trang chủ cá nhân, inbox hợp nhất (xử lý qua link hệ cũ), tra cứu, chi tiết hồ sơ; 4 dashboard: **trang chủ cá nhân, đơn vị của tôi, tổng quan công ty, theo dõi 4M**. Chỉ tiếng Việt, code sẵn sàng i18n | Trang chủ, dashboard, tra cứu mới | Số liệu khớp hệ cũ; G2a cho tra cứu/dashboard | M–L |
+| **B. Xử lý task** | API mới với Activiti 5 nhúng; port logic hoàn tất task và 6 delegate; form của bước xử lý; duyệt nhanh/hàng loạt; chuyển người, ủy quyền; phê duyệt email bằng token mới | Xử lý mọi việc trên UI mới | Golden master đạt cho 29 quy trình | XL |
+| **C. Tạo hồ sơ & quản trị** | Như Phase 1c: form tạo hồ sơ (lưu nháp), form designer, quản trị; dashboard tự cấu hình | Tắt UI Vaadin | Không còn chức năng phải dùng hệ cũ; pentest độc lập | L |
+| **D. Engine & gap** | Đổi sang Flowable; các mục P1/P2 của [bpm-gap-analysis.md](bpm-gap-analysis.md); **song ngữ Anh – Việt** | Đổi luồng, DMN, giao diện tiếng Anh | Không còn engine Activiti 5 | L |
+| **2. Thiết kế lại DB** | Như bên dưới | DB chuẩn hóa | Như bên dưới | L |
+
+### 9.2 Lộ trình gốc (tham khảo, dùng khi quay về F3)
 
 | Phase | Nội dung | Kết quả bàn giao | Tiêu chí hoàn thành | Độ lớn |
 |---|---|---|---|---|
@@ -285,6 +310,23 @@ Kết quả thô: [result-iw_dev.txt](../phase0/result-iw_dev.txt), [result-iw_d
 | Cấu hình đáng chú ý | `SOLRSEARCH_URL=localhost` (Solr không chạy), `REMOTE_HOST_NAME=10.118.29.207` (file server SMB), `REMOVE_ALL_DATA` có giá trị | Kiểm tra chức năng xóa toàn bộ dữ liệu trong mã cũ; không port |
 | Baseline hiệu năng | `pg_stat_statements` chưa bật | Đề nghị DBA bật trên prod để đo G2a |
 
+### 10.2 Kết quả khảo sát `iw_prod` (03/11/2026) – số liệu ra quyết định
+Kết quả thô: [result-iw_prod.txt](../phase0/result-iw_prod.txt), [-2](../phase0/result-iw_prod-2.txt), [-3](../phase0/result-iw_prod-3.txt), [-4](../phase0/result-iw_prod-4.txt). Chạy read-only, tổng thời gian vài phút.
+
+| Chủ đề | Số liệu prod | Quyết định / ảnh hưởng |
+|---|---|---|
+| Kích thước | DB **27 GB**; `act_ge_bytearray` 25 GB, trong đó **file đính kèm 22 GB** (14.276 file: JPG, PDF, XLSX…), ~1 GB blob mồ côi; `emails_schedule(_items)` ~880k dòng (1,1 GB); `act_hi_detail` 3,2 triệu dòng | File mới lưu **ngoài DB** (mục 6); dọn email log và blob mồ côi ở Phase 2 |
+| Quy trình | 38 key / 232 version; **29 key có hồ sơ mới trong 12 tháng** | Phạm vi port = 29 quy trình; 9 key còn lại (test, ngừng dùng) chỉ cần xem lịch sử |
+| Khối lượng 12 tháng | `RelSecWS` 2.246 · `Operational_Request_Form` 1.052 · `WS_assessment` 935 · `Uniform_Request` 865 · `RelSecProc_2510` 487 · `IM_Request` 241 · `RelSecProc_Document` 166 · `SanctionProcess` 162 · `QCCD_SV_Activity` 162 … | Thứ tự chuyển quy trình ở bước 3: bắt đầu quy trình đơn giản khối lượng vừa (vd. `Uniform_Request`, `Transport_Allowance`), để họ 4M/WS (call activity, multi-instance) sau |
+| Tải | ~**117 task/ngày**, ~26 hồ sơ được xử lý/ngày; 329 người xử lý trong 12 tháng; 588 hồ sơ người dùng | Tải thấp → vấn đề hiệu năng hiện tại do thiết kế (mục 4.2), không do khối lượng; 1 node backend là đủ, 2 node cho HA |
+| Hồ sơ đang mở | **8.318**; chỉ **428** có thao tác trong 30 ngày, **759** trong 90 ngày; **5.795 không động tới > 1 năm** (vd. `Operational_Request_Form` v3 còn 3.220 hồ sơ mở từ 2022) | Drain thực tế chỉ ~760 hồ sơ; cần **quyết định nghiệp vụ đóng hàng loạt** hồ sơ bỏ dở (có biên bản, lý do) – chi tiết: [abandoned-instances-report.md](abandoned-instances-report.md) |
+| Phần tử BPMN | userTask 2.127 (`formProperty` 77k), exclusiveGateway 1.517, serviceTask 268, parallelGateway 98, callActivity 68 (8 quy trình), multi-instance 64 (14), transaction + cancel/error boundary 48/96, timer `timeCycle` chỉ ở `SanctionProcess`; **không có scriptTask** | Flowable hỗ trợ đầy đủ |
+| Delegate/listener | 6 class: `MailNotificationListener` (382), `CreateEmailRejectTask` (25), `MultiInstanceProcessData` (12), `ServicesSaveInfoTemplate` (10), `CreateEmailPheDuyetTask` (2), `MailccDaiDienPhong` (1) | Port **6/16**; 10 class còn lại là code chết |
+| Biểu mẫu | 161 biểu mẫu được quy trình tham chiếu (1 mã thiếu); 200/292 đang active | Phạm vi form renderer/migration = 161 biểu mẫu |
+| Biến `serializable` | 2.314, chỉ `ArrayList`/`LinkedHashSet` | Chuyển JSON đơn giản |
+| Hồ sơ nghiệp vụ | `ho_so` 17.288 bản ghi, XML 366 MB, có cả JSON | Phạm vi migrate XML→jsonb Phase 2 nhỏ |
+| Phân hệ phụ | blog, chat, `file_management`, `signature`, `bao_cao_thong_ke`: **0 bản ghi** | **Bỏ** các phân hệ này khỏi phạm vi Phase 1 |
+
 ---
 
 ## 11. Chiến lược kiểm thử
@@ -304,7 +346,7 @@ Kết quả thô: [result-iw_dev.txt](../phase0/result-iw_dev.txt), [result-iw_d
 | Rủi ro | Mức | Giảm thiểu |
 |---|---|---|
 | Rule nghiệp vụ ẩn trong UI Vaadin bị sót | Cao | Port có hệ thống từ mã decompile (cùng Java); phỏng vấn người dùng chính; parity test |
-| Drain hồ sơ cũ kéo dài, phải duy trì hệ cũ lâu | Trung bình–Cao | Số liệu tuổi hồ sơ từ Phase 0; ngưỡng di chuyển thủ công; chặn `/sync` và vá bảo mật tạm thời cho hệ cũ trong thời gian drain |
+| Drain hồ sơ cũ kéo dài, phải duy trì hệ cũ lâu | Trung bình–Cao | Prod: 8.318 hồ sơ mở nhưng chỉ ~760 có thao tác trong 90 ngày → chốt chính sách đóng hàng loạt hồ sơ bỏ dở; chặn `/sync` và vá bảo mật tạm thời cho hệ cũ trong thời gian drain |
 | Người dùng phải làm việc trên 2 hệ trong thời gian drain | Trung bình | Inbox hợp nhất trên hệ mới, task cũ mở qua link; đào tạo, thông báo rõ mốc chuyển từng quy trình |
 | Ký PDF/Word→PDF không đạt chất lượng như Aspose/iText | Trung bình | Spike sớm ở Phase 0; gia hạn Aspose nếu cần; Gotenberg làm phương án miễn phí |
 | Tương thích phiên bản Spring Boot ↔ Flowable | Trung bình | Chọn cặp phiên bản được Flowable hỗ trợ chính thức; spike Phase 0 |
@@ -324,10 +366,10 @@ Kết quả thô: [result-iw_dev.txt](../phase0/result-iw_dev.txt), [result-iw_d
 ---
 
 ## 14. Câu hỏi
-Đã chốt: (1) Phase 1 giữ nguyên schema – **đúng**; (2) Rust – **không bắt buộc**; (3) truy cập bản sao DB – **có**.
+Đã chốt: (1) Phase 1 giữ nguyên schema – **đúng**; (2) Rust – **không bắt buộc**; (3) truy cập bản sao DB – **có**; (4) *04/11/2026* – stack Java/Spring + Next.js, **ưu tiên frontend** với lộ trình F1 → F2 → đổi engine (thay cho drain theo từng process key); nhóm người dùng ưu tiên là **người xử lý và quản lý**; 4 dashboard giai đoạn A: trang chủ cá nhân, đơn vị của tôi, tổng quan công ty, theo dõi 4M; **song ngữ để phase sau**.
 
 Còn mở:
-1. Đồng ý phương án C (Java/Spring + Flowable + Next.js) và chiến lược drain?
+1. Có cần duyệt trên điện thoại ngay từ giai đoạn B không? *(mặc định: inbox, xem hồ sơ và màn hình duyệt responsive)*
 2. Những quy trình nào đang thực sự dùng (4M Change, …)? Có cần giữ blog, chat, SharePoint, tích hợp PO/PRO? *(Phase 0 cung cấp số liệu)*
 3. Yêu cầu pháp lý của chữ ký số (PAdES, CA nào, có dùng USB token/HSM không)? License Aspose còn hiệu lực không?
 4. Mục tiêu hạ tầng: tiếp tục AlmaLinux on-prem hay chuyển container/cloud (Azure Arc đang cài trên server)?
@@ -335,8 +377,8 @@ Còn mở:
 ---
 
 ## 15. Bước tiếp theo ngay
-1. Chạy [phase0/db-survey.sql](../phase0/db-survey.sql) trên bản sao DB, lưu kết quả vào `phase0/`.
-2. Export BPMN đang dùng từ `act_ge_bytearray` để làm đầu vào spike Flowable.
-3. Thực hiện 5 spike Phase 0 (BPMN thật trên Flowable schema riêng, ký PDF PDFBox, Word→PDF, LDAP, form renderer 1 biểu mẫu phức tạp nhất).
-4. Viết ADR cho quyết định stack/engine và khởi tạo monorepo.
-5. Song song: vá khẩn hệ cũ (chặn `/sync` trên nginx, đổi mật khẩu đã lộ) vì hệ cũ còn chạy trong thời gian drain.
+1. Đo baseline hiệu năng hệ cũ: thời gian mở inbox, task detail, tìm kiếm; bật `pg_stat_statements`.
+2. Spike Activiti 5 nhúng trong API mới (mục 7 của [frontend-first-roadmap.md](frontend-first-roadmap.md)).
+3. Khởi tạo monorepo; dựng nền tảng giai đoạn A: auth AD, RBAC, layout, khung i18n (chỉ `vi`).
+4. Thiết kế schema `reporting` cho 4 dashboard đã chốt; hoàn thiện wireframe "Đơn vị của tôi" và "Theo dõi 4M" để người dùng duyệt.
+5. Song song: vá khẩn hệ cũ (chặn `/sync` trên nginx, đổi mật khẩu đã lộ) vì hệ cũ còn chạy lâu hơn theo lộ trình mới.

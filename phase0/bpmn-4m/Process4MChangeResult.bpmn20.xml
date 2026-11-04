@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
+  <process id="Process4MChangeResult" name="After 4M Change" isExecutable="true">
+    <documentation>4M Change process</documentation>
+    <startEvent id="sid-2D5793DE-D6D0-4C84-8927-9AC506A31149" activiti:initiator="init"></startEvent>
+    <userTask id="sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF" name="Input 4M Change Result" activiti:assignee="${init}" activiti:dueDate="P7D" activiti:formKey="P4MForm_Results_BTMV" activiti:priority="1">
+      <documentation>Creat 4M Form Change Result</documentation>
+      <extensionElements>
+        <activiti:formProperty id="P4MForm_Title" name="Title" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_ProcessText" name="4M Process" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4M_class" name="4M change class" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Situation" name="Current Situation" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Detail" name="Detail of Change" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Purpose" name="Purpose" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_ExpectedDate" name="Expected change date" type="date" datePattern="dd/MM/yyyy HH:mm"></activiti:formProperty>
+        <activiti:formProperty id="P4M_ActualDate" name="Actual applied date" type="date" datePattern="dd/MM/yyyy HH:mm"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_HaveProb" name="4M Form - Have a problem" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Content" name="4M Form Contet" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Measure" name="4M Form Measure" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_NguoiDN" name="Người khởi tạo" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_DonVi" name="đơn vị đề nghị" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_SafetyLawNo" name="Law No" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_RelateSafe" name="Relate Safty Law" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_SafetyAction" name="Safety Action to perform" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvLawNo" name="Law No" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvRelated" name="Env Related" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvAction" name="Env Action to perform" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_PBXL_PB" name="Phòng ban xử lý  " type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_RiskAsessmentDM" name="Risk Asessment" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Standardization" name="Standardization needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Initial_Control" name="initial control needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Cancel" name="Cancel 4M Change" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MForm_PBXL_BMC_RS_P4M_PBXL_PB_RS" name="Phòng ban xử lý  RS" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MForm_PBXL_BMC_RS_P4M_ResultsConfirm" name="Results confirm" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MForm_PBXL_BMC_RS_P4M_Suggestions" name="Suggestions for improvement" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MForm_PBXL_BMC_RS_P4M_CancelResults" name="Cancel results" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:taskListener event="create" class="com.eform.activiti.listener.MailNotificationListener"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-530D4262-B48A-486B-87A4-A4D99DF06DB1" sourceRef="sid-2D5793DE-D6D0-4C84-8927-9AC506A31149" targetRef="sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF"></sequenceFlow>
+    <userTask id="sid-EB41ABE7-E323-45F8-B432-485F72EA988C" name="Check 4M Change Result" activiti:assignee="${P4MForm_DonVi_DAI_DIEN}" activiti:dueDate="P2D" activiti:formKey="P4MForm_Results_BTMV#P4M_Button_PDTC" activiti:priority="1">
+      <documentation>Originated Section Manager check 4M Change result</documentation>
+      <extensionElements>
+        <activiti:formProperty id="P4MForm_Title" name="Title" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_ProcessText" name="4M Process" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4M_class" name="4M change class" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Situation" name="Current Situation" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Detail" name="Detail of Change" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Purpose" name="Purpose" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_ExpectedDate" name="Expected change date" type="date" datePattern="dd/MM/yyyy HH:mm"></activiti:formProperty>
+        <activiti:formProperty id="P4M_ActualDate" name="Actual applied date" type="date" datePattern="dd/MM/yyyy HH:mm"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_HaveProb" name="4M Form - Have a problem" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Content" name="4M Form Contet" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Measure" name="4M Form Measure" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_NguoiDN" name="Người khởi tạo" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_DonVi" name="đơn vị đề nghị" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_SafetyLawNo" name="Law No" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_RelateSafe" name="Relate Safty Law" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_SafetyAction" name="Safety Action to perform" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvLawNo" name="Law No" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvRelated" name="Env Related" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvAction" name="Env Action to perform" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_PBXL_PB" name="Phòng ban xử lý  " type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_RiskAsessmentDM" name="Risk Asessment" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Standardization" name="Standardization needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Initial_Control" name="initial control needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Cancel" name="Cancel 4M Change" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MForm_PBXL_BMC_RS_P4M_PBXL_PB_RS" name="Phòng ban xử lý  RS" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MForm_PBXL_BMC_RS_P4M_ResultsConfirm" name="Results confirm" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MForm_PBXL_BMC_RS_P4M_Suggestions" name="Suggestions for improvement" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MForm_PBXL_BMC_RS_P4M_CancelResults" name="Cancel results" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4M_Button_PDTC" name="Nút phê duyệt từ chối" type="enum">
+          <activiti:value id="P4M_Button_PD" name="Approve"></activiti:value>
+          <activiti:value id="P4M_Button_TC" name="Reject"></activiti:value>
+          <activiti:value id="P4M_Button_YCCS" name="Return for editing"></activiti:value>
+        </activiti:formProperty>
+        <activiti:taskListener event="create" class="com.eform.activiti.listener.MailNotificationListener"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="sid-4B57430F-C15E-40DF-AAD8-C47F24499428"></exclusiveGateway>
+    <sequenceFlow id="sid-B69838A2-3CD1-4B42-8F39-7B02A66308A8" sourceRef="sid-EB41ABE7-E323-45F8-B432-485F72EA988C" targetRef="sid-4B57430F-C15E-40DF-AAD8-C47F24499428"></sequenceFlow>
+    <userTask id="sid-5FB83087-5740-4E41-91C3-417B5213594E" name="Approve 4M Change Result" activiti:assignee="${P4MForm_DonVi_LANH_DAO}" activiti:candidateGroups="lanhdao" activiti:dueDate="P2D" activiti:formKey="P4MF_Results_BTMV_RV#P4M_Button_PDTC" activiti:priority="1">
+      <documentation>Originated Section GM approve 4M Change result</documentation>
+      <extensionElements>
+        <activiti:formProperty id="P4MForm_Title" name="Title" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_ProcessText" name="4M Process" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4M_class" name="4M change class" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Situation" name="Current Situation" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Detail" name="Detail of Change" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Purpose" name="Purpose" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_ExpectedDate" name="Expected change date" type="date" datePattern="dd/MM/yyyy HH:mm"></activiti:formProperty>
+        <activiti:formProperty id="P4M_ActualDate" name="Actual applied date" type="date" datePattern="dd/MM/yyyy HH:mm"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_HaveProb" name="4M Form - Have a problem" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Content" name="4M Form Contet" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Measure" name="4M Form Measure" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_NguoiDN" name="Người khởi tạo" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_DonVi" name="đơn vị đề nghị" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_SafetyLawNo" name="Law No" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_RelateSafe" name="Relate Safty Law" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_SafetyAction" name="Safety Action to perform" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvLawNo" name="Law No" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvRelated" name="Env Related" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvAction" name="Env Action to perform" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_PBXL_PB" name="Phòng ban xử lý  " type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_RiskAsessmentDM" name="Risk Asessment" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Standardization" name="Standardization needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Initial_Control" name="initial control needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Cancel" name="Cancel 4M Change" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_PBXL_PB_RS" name="Phòng ban xử lý  RS" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_ResultsConfirm" name="Results confirm" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_Suggestions" name="Suggestions for improvement" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_CancelResults" name="Cancel results" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4M_Button_PDTC" name="Nút phê duyệt từ chối" type="enum">
+          <activiti:value id="P4M_Button_PD" name="Approve"></activiti:value>
+          <activiti:value id="P4M_Button_TC" name="Reject"></activiti:value>
+          <activiti:value id="P4M_Button_YCCS" name="Return for editing"></activiti:value>
+        </activiti:formProperty>
+        <activiti:taskListener event="create" class="com.eform.activiti.listener.MailNotificationListener"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4"></exclusiveGateway>
+    <sequenceFlow id="sid-8880C41B-04A2-47DE-A567-EBE23FE007F3" sourceRef="sid-5FB83087-5740-4E41-91C3-417B5213594E" targetRef="sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4"></sequenceFlow>
+    <transaction id="sid-C23F28A8-D04A-46BF-B363-627E429E1171" name="sub process">
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="P4M_PBXL_BMC_RS" activiti:elementVariable="element_var"></multiInstanceLoopCharacteristics>
+      <startEvent id="sid-238E87AF-984A-48B2-9BD4-3E6B59730D01"></startEvent>
+      <serviceTask id="sid-C2C0930E-6032-45C5-A362-138ED2EF6191" name="Get data" activiti:class="com.eform.servicetask.MultiInstanceProcessData"></serviceTask>
+      <callActivity id="sid-5340C041-20F4-4EBF-942D-0C9D0FD19B68" name="Process steps in Relate Sections" calledElement="RelSecProcResult" activiti:inheritVariables="false">
+        <extensionElements>
+          <activiti:in sourceExpression="${P4M_PBXL_PB_RS_DAI_DIEN}" target="init"></activiti:in>
+          <activiti:in sourceExpression="P4M_PBXL_BMC_RS@${loopCounter+1}" target="dataLoopPath"></activiti:in>
+          <activiti:out sourceExpression="${Button_4M_TPPC}" target="Button_4M_TPPC"></activiti:out>
+        </extensionElements>
+      </callActivity>
+      <exclusiveGateway id="sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D"></exclusiveGateway>
+      <endEvent id="sid-BD78F673-44BD-4AB6-82EF-BC4182DE5DD5"></endEvent>
+      <endEvent id="sid-7D4B8FF6-BC84-444E-ABFE-C15F42F0883C">
+        <cancelEventDefinition></cancelEventDefinition>
+      </endEvent>
+      <endEvent id="sid-AA197883-B99B-4A8E-AE24-88AAF954179C">
+        <errorEventDefinition></errorEventDefinition>
+      </endEvent>
+      <sequenceFlow id="sid-B1BC81C5-5964-4405-A2DE-65273815A958" sourceRef="sid-5340C041-20F4-4EBF-942D-0C9D0FD19B68" targetRef="sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D"></sequenceFlow>
+      <sequenceFlow id="sid-6F3A6C71-7BEF-44E2-8830-30B234FE7D26" sourceRef="sid-C2C0930E-6032-45C5-A362-138ED2EF6191" targetRef="sid-5340C041-20F4-4EBF-942D-0C9D0FD19B68"></sequenceFlow>
+      <sequenceFlow id="sid-4C4429E9-8B5F-47A9-97C0-909BBA3D5875" sourceRef="sid-238E87AF-984A-48B2-9BD4-3E6B59730D01" targetRef="sid-C2C0930E-6032-45C5-A362-138ED2EF6191"></sequenceFlow>
+      <sequenceFlow id="sid-A23728B3-7D26-4F75-B7AB-2F2C8919C2FE" name="Approve" sourceRef="sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D" targetRef="sid-BD78F673-44BD-4AB6-82EF-BC4182DE5DD5">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_TPPC=='Button_4M_TPXL_PD'}]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="sid-23E4FB57-6F65-4E3E-BF4C-5B65BCE24695" name="Reject" sourceRef="sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D" targetRef="sid-7D4B8FF6-BC84-444E-ABFE-C15F42F0883C">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_TPPC=='Button_4M_TPXL_TC'}]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="sid-02288CA8-D926-4783-A1B9-FC2F0D1CD92B" name="Update" sourceRef="sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D" targetRef="sid-AA197883-B99B-4A8E-AE24-88AAF954179C">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_TPPC=='Button_4M_TPXL_YCCS'}]]></conditionExpression>
+      </sequenceFlow>
+    </transaction>
+    <endEvent id="sid-41DE9024-9EAB-43E4-9851-115516392E5D" name="The END"></endEvent>
+    <userTask id="print-finish" name="Review 4M Change Result" activiti:assignee="${init}" activiti:dueDate="P2D" activiti:formKey="P4MF_Results_BTMV_RV" activiti:priority="1">
+      <documentation>Xác nhận hoàn thành phê duyệt kết quả thực hiện 4M</documentation>
+      <extensionElements>
+        <activiti:formProperty id="P4MForm_Title" name="Title" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_ProcessText" name="4M Process" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4M_class" name="4M change class" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Situation" name="Current Situation" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Detail" name="Detail of Change" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Purpose" name="Purpose" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_ExpectedDate" name="Expected change date" type="date" datePattern="dd/MM/yyyy HH:mm"></activiti:formProperty>
+        <activiti:formProperty id="P4M_ActualDate" name="Actual applied date" type="date" datePattern="dd/MM/yyyy HH:mm"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_HaveProb" name="4M Form - Have a problem" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Content" name="4M Form Contet" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Measure" name="4M Form Measure" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_NguoiDN" name="Người khởi tạo" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_DonVi" name="đơn vị đề nghị" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_SafetyLawNo" name="Law No" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_RelateSafe" name="Relate Safty Law" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_SafetyAction" name="Safety Action to perform" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvLawNo" name="Law No" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvRelated" name="Env Related" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvAction" name="Env Action to perform" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_PBXL_PB" name="Phòng ban xử lý  " type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_RiskAsessmentDM" name="Risk Asessment" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Standardization" name="Standardization needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Initial_Control" name="initial control needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Cancel" name="Cancel 4M Change" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_PBXL_PB_RS" name="Phòng ban xử lý  RS" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_ResultsConfirm" name="Results confirm" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_Suggestions" name="Suggestions for improvement" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_CancelResults" name="Cancel results" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:taskListener event="create" class="com.eform.activiti.listener.MailNotificationListener"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-DD0B1148-4A5D-4B18-88B2-46F947DCDE6C" sourceRef="sid-C23F28A8-D04A-46BF-B363-627E429E1171" targetRef="print-finish"></sequenceFlow>
+    <boundaryEvent id="sid-F7B6B723-F4AE-487A-B7ED-661A5E122EC9" attachedToRef="sid-C23F28A8-D04A-46BF-B363-627E429E1171" cancelActivity="false">
+      <cancelEventDefinition></cancelEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="sid-E02188CD-2165-4037-A263-CAECA15BD209" name="Approve" sourceRef="sid-4B57430F-C15E-40DF-AAD8-C47F24499428" targetRef="sid-5FB83087-5740-4E41-91C3-417B5213594E">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${P4M_Button_PDTC=='P4M_Button_PD'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-9BB89E32-618E-4B9F-B2EE-679F8C489CD9" name="Approve" sourceRef="sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4" targetRef="sid-C23F28A8-D04A-46BF-B363-627E429E1171">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${P4M_Button_PDTC=='P4M_Button_PD'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-5B24A5DF-CD8F-47EF-B6A2-7F7AFC5B42B5" name="Y/c chinh sua" sourceRef="sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4" targetRef="sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${P4M_Button_PDTC=='P4M_Button_YCCS'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-710D3685-43C8-4EBE-BFF9-9A8AF13C038E" sourceRef="print-finish" targetRef="sid-41DE9024-9EAB-43E4-9851-115516392E5D"></sequenceFlow>
+    <callActivity id="sid-B1F8C4D1-E90D-4AA6-B091-44A3657F1B67" name="Call 4M Process" calledElement="Process4MChange" activiti:inheritVariables="false">
+      <extensionElements>
+        <activiti:in sourceExpression="${P4MForm_NguoiDN}" target="init"></activiti:in>
+      </extensionElements>
+    </callActivity>
+    <userTask id="sid-5B8186AB-B0B2-4CCE-A5F2-3BBB5FD895AF" name="General Director approve 4M Result" activiti:assignee="Toshiaki.Matsushima" activiti:dueDate="P3D" activiti:formKey="P4MF_Results_BTMV_RV#Button_4M_XL" activiti:priority="1">
+      <documentation>General Manager process reject</documentation>
+      <extensionElements>
+        <activiti:formProperty id="P4MForm_Title" name="Title" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_ProcessText" name="4M Process" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4M_class" name="4M change class" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Situation" name="Current Situation" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Detail" name="Detail of Change" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Purpose" name="Purpose" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_ExpectedDate" name="Expected change date" type="date" datePattern="dd/MM/yyyy HH:mm"></activiti:formProperty>
+        <activiti:formProperty id="P4M_ActualDate" name="Actual applied date" type="date" datePattern="dd/MM/yyyy HH:mm"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_HaveProb" name="4M Form - Have a problem" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Content" name="4M Form Contet" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_Measure" name="4M Form Measure" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_NguoiDN" name="Người khởi tạo" type="string"></activiti:formProperty>
+        <activiti:formProperty id="P4MForm_DonVi" name="đơn vị đề nghị" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_SafetyLawNo" name="Law No" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_RelateSafe" name="Relate Safty Law" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_SafetyAction" name="Safety Action to perform" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvLawNo" name="Law No" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvRelated" name="Env Related" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MForm_EnvAction" name="Env Action to perform" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_PBXL_PB" name="Phòng ban xử lý  " type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_RiskAsessmentDM" name="Risk Asessment" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Standardization" name="Standardization needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Initial_Control" name="initial control needs" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4M_Cancel" name="Cancel 4M Change" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_PBXL_PB_RS" name="Phòng ban xử lý  RS" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_ResultsConfirm" name="Results confirm" type="enum">
+          <activiti:value id="N" name="No"></activiti:value>
+          <activiti:value id="Y" name="Yes"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_Suggestions" name="Suggestions for improvement" type="string"></activiti:formProperty>
+        <activiti:formProperty id="RiskAm_BMC_View_P4MF_PBXL_BMC_view_P4MF_PBXL_BMC_RS_V_P4M_CancelResults" name="Cancel results" type="enum">
+          <activiti:value id="Y" name="Yes"></activiti:value>
+          <activiti:value id="N" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="Button_4M_XL" name="4M Xử lý" type="enum">
+          <activiti:value id="Button_4M_TT" name="Continue"></activiti:value>
+          <activiti:value id="Button_4M_KT" name="Stop"></activiti:value>
+        </activiti:formProperty>
+        <activiti:taskListener event="create" class="com.eform.activiti.listener.MailNotificationListener"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="sid-7797B9D4-DDC8-4C12-AB95-8319931A927F"></exclusiveGateway>
+    <sequenceFlow id="sid-29548D93-929A-4D47-A4A6-28A7CC5F11F5" sourceRef="sid-5B8186AB-B0B2-4CCE-A5F2-3BBB5FD895AF" targetRef="sid-7797B9D4-DDC8-4C12-AB95-8319931A927F"></sequenceFlow>
+    <sequenceFlow id="sid-146CF31A-CFD8-4898-AA27-18808EFF4294" sourceRef="sid-F7B6B723-F4AE-487A-B7ED-661A5E122EC9" targetRef="sid-5B8186AB-B0B2-4CCE-A5F2-3BBB5FD895AF"></sequenceFlow>
+    <boundaryEvent id="sid-4E417BB4-FB36-4218-9547-1B6FD29A2D23" attachedToRef="sid-C23F28A8-D04A-46BF-B363-627E429E1171">
+      <errorEventDefinition></errorEventDefinition>
+    </boundaryEvent>
+    <serviceTask id="sid-4A0CA515-34FA-4420-8088-27C97F852639" name="Reject" activiti:class="com.eform.servicetask.CreateEmailRejectTask"></serviceTask>
+    <sequenceFlow id="sid-8B790442-E07A-4DD3-977D-95F5FFE718A4" sourceRef="sid-4A0CA515-34FA-4420-8088-27C97F852639" targetRef="sid-41DE9024-9EAB-43E4-9851-115516392E5D"></sequenceFlow>
+    <sequenceFlow id="sid-D606F3B3-E6A7-4B4D-8D8D-6CCCD3D9A949" name="Reject" sourceRef="sid-4B57430F-C15E-40DF-AAD8-C47F24499428" targetRef="sid-4A0CA515-34FA-4420-8088-27C97F852639">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${P4M_Button_PDTC=='P4M_Button_TC'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-830D6789-CBAE-4817-A0C0-FB6F89D65D52" name="Reject" sourceRef="sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4" targetRef="sid-4A0CA515-34FA-4420-8088-27C97F852639">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${P4M_Button_PDTC=='P4M_Button_TC'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-3D2F02F5-3B1F-4305-B72A-5FB6BBFB9AB7" name="Cancel" sourceRef="sid-7797B9D4-DDC8-4C12-AB95-8319931A927F" targetRef="sid-4A0CA515-34FA-4420-8088-27C97F852639">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_XL=='Button_4M_KT'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-980CF8A3-D0C1-448A-B4A3-CCA061BB8A33" name="Continue" sourceRef="sid-7797B9D4-DDC8-4C12-AB95-8319931A927F" targetRef="sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_XL=='Button_4M_TT'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-B47CC415-21C4-4CC2-8D57-9993494581EE" sourceRef="sid-4E417BB4-FB36-4218-9547-1B6FD29A2D23" targetRef="sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF"></sequenceFlow>
+    <sequenceFlow id="sid-1F032FA9-116D-43EC-BCA4-73E3AB66939A" name="Y/C chinh sua" sourceRef="sid-4B57430F-C15E-40DF-AAD8-C47F24499428" targetRef="sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${P4M_Button_PDTC=='P4M_Button_YCCS'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-CE149FDD-2DA8-4334-BF4D-32DC220A5FC1" sourceRef="sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF" targetRef="sid-EB41ABE7-E323-45F8-B432-485F72EA988C"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Process4MChangeResult">
+    <bpmndi:BPMNPlane bpmnElement="Process4MChangeResult" id="BPMNPlane_Process4MChangeResult">
+      <bpmndi:BPMNShape bpmnElement="sid-2D5793DE-D6D0-4C84-8927-9AC506A31149" id="BPMNShape_sid-2D5793DE-D6D0-4C84-8927-9AC506A31149">
+        <omgdc:Bounds height="30.0" width="30.0" x="36.555545636165064" y="650.9634600301222"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF" id="BPMNShape_sid-A6406A5A-DEC2-4064-AB06-102B2F504EFF">
+        <omgdc:Bounds height="80.0" width="99.99999999999999" x="89.9999986588955" y="599.9999821186069"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-EB41ABE7-E323-45F8-B432-485F72EA988C" id="BPMNShape_sid-EB41ABE7-E323-45F8-B432-485F72EA988C">
+        <omgdc:Bounds height="80.0" width="100.0" x="269.99999597668653" y="599.9999910593034"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-4B57430F-C15E-40DF-AAD8-C47F24499428" id="BPMNShape_sid-4B57430F-C15E-40DF-AAD8-C47F24499428">
+        <omgdc:Bounds height="40.0" width="40.0" x="425.00000000000006" y="652.9999984105427"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-5FB83087-5740-4E41-91C3-417B5213594E" id="BPMNShape_sid-5FB83087-5740-4E41-91C3-417B5213594E">
+        <omgdc:Bounds height="80.0" width="100.0" x="480.0" y="575.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4" id="BPMNShape_sid-D1560989-B31B-4A6E-B028-87F57CF7D2A4">
+        <omgdc:Bounds height="40.0" width="40.0" x="666.5555456361653" y="652.9999984105427"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-C23F28A8-D04A-46BF-B363-627E429E1171" id="BPMNShape_sid-C23F28A8-D04A-46BF-B363-627E429E1171">
+        <omgdc:Bounds height="203.71188278246677" width="430.70648363448163" x="735.0" y="560.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-238E87AF-984A-48B2-9BD4-3E6B59730D01" id="BPMNShape_sid-238E87AF-984A-48B2-9BD4-3E6B59730D01">
+        <omgdc:Bounds height="30.0" width="30.0" x="747.0041395676969" y="584.4038446414379"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-C2C0930E-6032-45C5-A362-138ED2EF6191" id="BPMNShape_sid-C2C0930E-6032-45C5-A362-138ED2EF6191">
+        <omgdc:Bounds height="80.0" width="100.0" x="750.0" y="632.5834392551939"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-5340C041-20F4-4EBF-942D-0C9D0FD19B68" id="BPMNShape_sid-5340C041-20F4-4EBF-942D-0C9D0FD19B68">
+        <omgdc:Bounds height="80.0" width="100.0" x="882.4067798709891" y="590.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D" id="BPMNShape_sid-38AB75A9-A08B-4D75-9DE8-563CDA5DEA9D">
+        <omgdc:Bounds height="40.0" width="40.0" x="1028.914740070285" y="663.9756400200814"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-BD78F673-44BD-4AB6-82EF-BC4182DE5DD5" id="BPMNShape_sid-BD78F673-44BD-4AB6-82EF-BC4182DE5DD5">
+        <omgdc:Bounds height="28.0" width="28.0" x="1133.8842900953869" y="669.9756400200814"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-7D4B8FF6-BC84-444E-ABFE-C15F42F0883C" id="BPMNShape_sid-7D4B8FF6-BC84-444E-ABFE-C15F42F0883C">
+        <omgdc:Bounds height="28.0" width="28.0" x="1133.8842900953869" y="722.348844042171"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-AA197883-B99B-4A8E-AE24-88AAF954179C" id="BPMNShape_sid-AA197883-B99B-4A8E-AE24-88AAF954179C">
+        <omgdc:Bounds height="28.0" width="28.0" x="1133.8842900953869" y="593.5861960113796"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-41DE9024-9EAB-43E4-9851-115516392E5D" id="BPMNShape_sid-41DE9024-9EAB-43E4-9851-115516392E5D">
+        <omgdc:Bounds height="28.0" width="28.0" x="786.0" y="863.6894150964708"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="print-finish" id="BPMNShape_print-finish">
+        <omgdc:Bounds height="80.0" width="100.0" x="884.7736961176853" y="802.4691662462727"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-F7B6B723-F4AE-487A-B7ED-661A5E122EC9" id="BPMNShape_sid-F7B6B723-F4AE-487A-B7ED-661A5E122EC9">
+        <omgdc:Bounds height="30.0" width="30.0" x="321.6245639142244" y="343.9277351130488"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-B1F8C4D1-E90D-4AA6-B091-44A3657F1B67" id="BPMNShape_sid-B1F8C4D1-E90D-4AA6-B091-44A3657F1B67">
+        <omgdc:Bounds height="80.0" width="100.0" x="255.0" y="450.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-5B8186AB-B0B2-4CCE-A5F2-3BBB5FD895AF" id="BPMNShape_sid-5B8186AB-B0B2-4CCE-A5F2-3BBB5FD895AF">
+        <omgdc:Bounds height="80.0" width="100.0" x="917.0246325429323" y="974.9999854713681"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-7797B9D4-DDC8-4C12-AB95-8319931A927F" id="BPMNShape_sid-7797B9D4-DDC8-4C12-AB95-8319931A927F">
+        <omgdc:Bounds height="40.0" width="40.0" x="810.0" y="995.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-4E417BB4-FB36-4218-9547-1B6FD29A2D23" id="BPMNShape_sid-4E417BB4-FB36-4218-9547-1B6FD29A2D23">
+        <omgdc:Bounds height="30.0" width="30.0" x="426.5483293727377" y="244.7071247282263"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-4A0CA515-34FA-4420-8088-27C97F852639" id="BPMNShape_sid-4A0CA515-34FA-4420-8088-27C97F852639">
+        <omgdc:Bounds height="80.0" width="100.0" x="555.5555766320349" y="837.6894150964708"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-830D6789-CBAE-4817-A0C0-FB6F89D65D52" id="BPMNEdge_sid-830D6789-CBAE-4817-A0C0-FB6F89D65D52">
+        <omgdi:waypoint x="680.8850536220164" y="687.3295063963938"></omgdi:waypoint>
+        <omgdi:waypoint x="621.3844299876366" y="837.6894150964708"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-9BB89E32-618E-4B9F-B2EE-679F8C489CD9" id="BPMNEdge_sid-9BB89E32-618E-4B9F-B2EE-679F8C489CD9">
+        <omgdi:waypoint x="705.7448970613607" y="672.1893498357381"></omgdi:waypoint>
+        <omgdi:waypoint x="735.0" y="670.9534765132123"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B47CC415-21C4-4CC2-8D57-9993494581EE" id="BPMNEdge_sid-B47CC415-21C4-4CC2-8D57-9993494581EE">
+        <omgdi:waypoint x="428.0749526242782" y="266.3001603715449"></omgdi:waypoint>
+        <omgdi:waypoint x="128.9751241389537" y="412.6610813885935"></omgdi:waypoint>
+        <omgdi:waypoint x="138.0601855456026" y="599.9999821186069"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-6F3A6C71-7BEF-44E2-8830-30B234FE7D26" id="BPMNEdge_sid-6F3A6C71-7BEF-44E2-8830-30B234FE7D26">
+        <omgdi:waypoint x="850.0" y="656.502903463641"></omgdi:waypoint>
+        <omgdi:waypoint x="882.4067798709891" y="646.0805357915528"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-29548D93-929A-4D47-A4A6-28A7CC5F11F5" id="BPMNEdge_sid-29548D93-929A-4D47-A4A6-28A7CC5F11F5">
+        <omgdi:waypoint x="917.0246325429323" y="1014.9999907728353"></omgdi:waypoint>
+        <omgdi:waypoint x="849.9999978794133" y="1014.9999978794133"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-710D3685-43C8-4EBE-BFF9-9A8AF13C038E" id="BPMNEdge_sid-710D3685-43C8-4EBE-BFF9-9A8AF13C038E">
+        <omgdi:waypoint x="884.7736961176853" y="855.5356064585541"></omgdi:waypoint>
+        <omgdi:waypoint x="813.5451212308412" y="874.149684761853"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-146CF31A-CFD8-4898-AA27-18808EFF4294" id="BPMNEdge_sid-146CF31A-CFD8-4898-AA27-18808EFF4294">
+        <omgdi:waypoint x="349.8227055102808" y="366.05578242002184"></omgdi:waypoint>
+        <omgdi:waypoint x="1158.859375" y="803.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1158.859375" y="1014.9999854713681"></omgdi:waypoint>
+        <omgdi:waypoint x="1017.0246325429323" y="1014.9999854713681"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B1BC81C5-5964-4405-A2DE-65273815A958" id="BPMNEdge_sid-B1BC81C5-5964-4405-A2DE-65273815A958">
+        <omgdi:waypoint x="982.4067798709891" y="630.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1023.4319836595635" y="630.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1023.4319836595635" y="685.7040374236408"></omgdi:waypoint>
+        <omgdi:waypoint x="1030.185099581944" y="685.2459995317404"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-4C4429E9-8B5F-47A9-97C0-909BBA3D5875" id="BPMNEdge_sid-4C4429E9-8B5F-47A9-97C0-909BBA3D5875">
+        <omgdi:waypoint x="768.916191414892" y="612.7163778061548"></omgdi:waypoint>
+        <omgdi:waypoint x="779.2314452503617" y="632.5834392551939"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-980CF8A3-D0C1-448A-B4A3-CCA061BB8A33" id="BPMNEdge_sid-980CF8A3-D0C1-448A-B4A3-CCA061BB8A33">
+        <omgdi:waypoint x="810.0190294957183" y="1015.0190294957183"></omgdi:waypoint>
+        <omgdi:waypoint x="305.0" y="1015.5"></omgdi:waypoint>
+        <omgdi:waypoint x="157.57656254531554" y="679.9999821186069"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-5B24A5DF-CD8F-47EF-B6A2-7F7AFC5B42B5" id="BPMNEdge_sid-5B24A5DF-CD8F-47EF-B6A2-7F7AFC5B42B5">
+        <omgdi:waypoint x="686.6325444616876" y="653.076997236065"></omgdi:waypoint>
+        <omgdi:waypoint x="687.0" y="558.0"></omgdi:waypoint>
+        <omgdi:waypoint x="541.0" y="562.0"></omgdi:waypoint>
+        <omgdi:waypoint x="139.9999986588955" y="558.0"></omgdi:waypoint>
+        <omgdi:waypoint x="139.9999986588955" y="599.9999821186069"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-8B790442-E07A-4DD3-977D-95F5FFE718A4" id="BPMNEdge_sid-8B790442-E07A-4DD3-977D-95F5FFE718A4">
+        <omgdi:waypoint x="655.5555766320349" y="877.6894150964708"></omgdi:waypoint>
+        <omgdi:waypoint x="786.0" y="877.6894150964708"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-CE149FDD-2DA8-4334-BF4D-32DC220A5FC1" id="BPMNEdge_sid-CE149FDD-2DA8-4334-BF4D-32DC220A5FC1">
+        <omgdi:waypoint x="189.9999986588955" y="639.9999846021337"></omgdi:waypoint>
+        <omgdi:waypoint x="269.99999597668653" y="639.9999885757766"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-E02188CD-2165-4037-A263-CAECA15BD209" id="BPMNEdge_sid-E02188CD-2165-4037-A263-CAECA15BD209">
+        <omgdi:waypoint x="445.00000000000006" y="652.9999984105427"></omgdi:waypoint>
+        <omgdi:waypoint x="445.0" y="615.0"></omgdi:waypoint>
+        <omgdi:waypoint x="480.0" y="615.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-8880C41B-04A2-47DE-A567-EBE23FE007F3" id="BPMNEdge_sid-8880C41B-04A2-47DE-A567-EBE23FE007F3">
+        <omgdi:waypoint x="580.0" y="615.0"></omgdi:waypoint>
+        <omgdi:waypoint x="641.0" y="615.0"></omgdi:waypoint>
+        <omgdi:waypoint x="641.0" y="673.0"></omgdi:waypoint>
+        <omgdi:waypoint x="666.5555463339759" y="672.9999991083533"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-DD0B1148-4A5D-4B18-88B2-46F947DCDE6C" id="BPMNEdge_sid-DD0B1148-4A5D-4B18-88B2-46F947DCDE6C">
+        <omgdi:waypoint x="941.5672335116496" y="763.7118827824668"></omgdi:waypoint>
+        <omgdi:waypoint x="938.2240626591298" y="802.4691662462727"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-530D4262-B48A-486B-87A4-A4D99DF06DB1" id="BPMNEdge_sid-530D4262-B48A-486B-87A4-A4D99DF06DB1">
+        <omgdi:waypoint x="51.23466113860279" y="650.9668926515777"></omgdi:waypoint>
+        <omgdi:waypoint x="51.0" y="639.9999821186069"></omgdi:waypoint>
+        <omgdi:waypoint x="89.9999986588955" y="639.9999821186069"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-02288CA8-D926-4783-A1B9-FC2F0D1CD92B" id="BPMNEdge_sid-02288CA8-D926-4783-A1B9-FC2F0D1CD92B">
+        <omgdi:waypoint x="1057.7540813599564" y="672.8149813097529"></omgdi:waypoint>
+        <omgdi:waypoint x="1098.0" y="622.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1134.4344919013934" y="611.4724446576773"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B69838A2-3CD1-4B42-8F39-7B02A66308A8" id="BPMNEdge_sid-B69838A2-3CD1-4B42-8F39-7B02A66308A8">
+        <omgdi:waypoint x="369.99999597668653" y="639.9999910593034"></omgdi:waypoint>
+        <omgdi:waypoint x="405.0" y="639.9999910593034"></omgdi:waypoint>
+        <omgdi:waypoint x="405.0" y="673.0"></omgdi:waypoint>
+        <omgdi:waypoint x="425.00000079472863" y="672.9999992052714"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-D606F3B3-E6A7-4B4D-8D8D-6CCCD3D9A949" id="BPMNEdge_sid-D606F3B3-E6A7-4B4D-8D8D-6CCCD3D9A949">
+        <omgdi:waypoint x="453.79166474937904" y="684.2083336611637"></omgdi:waypoint>
+        <omgdi:waypoint x="574.1801241574424" y="837.6894150964708"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-1F032FA9-116D-43EC-BCA4-73E3AB66939A" id="BPMNEdge_sid-1F032FA9-116D-43EC-BCA4-73E3AB66939A">
+        <omgdi:waypoint x="438.3684211081085" y="686.3684195186512"></omgdi:waypoint>
+        <omgdi:waypoint x="382.0" y="800.0"></omgdi:waypoint>
+        <omgdi:waypoint x="139.9999986588955" y="800.0"></omgdi:waypoint>
+        <omgdi:waypoint x="139.9999986588955" y="679.9999821186069"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-23E4FB57-6F65-4E3E-BF4C-5B65BCE24695" id="BPMNEdge_sid-23E4FB57-6F65-4E3E-BF4C-5B65BCE24695">
+        <omgdi:waypoint x="1056.041214605029" y="696.8491654853374"></omgdi:waypoint>
+        <omgdi:waypoint x="1091.0" y="760.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1134.9571318470103" y="741.7236537710294"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-3D2F02F5-3B1F-4305-B72A-5FB6BBFB9AB7" id="BPMNEdge_sid-3D2F02F5-3B1F-4305-B72A-5FB6BBFB9AB7">
+        <omgdi:waypoint x="817.5913577843532" y="1007.4086422156468"></omgdi:waypoint>
+        <omgdi:waypoint x="655.5555766320349" y="908.2784096553634"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-A23728B3-7D26-4F75-B7AB-2F2C8919C2FE" id="BPMNEdge_sid-A23728B3-7D26-4F75-B7AB-2F2C8919C2FE">
+        <omgdi:waypoint x="1068.914740070285" y="683.9756400200814"></omgdi:waypoint>
+        <omgdi:waypoint x="1133.8842900953869" y="683.9756400200814"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

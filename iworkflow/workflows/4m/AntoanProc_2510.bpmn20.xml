@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
+  <process id="AntoanProc_2510" name="4M Change - Related Laws Assessment" isExecutable="true">
+    <documentation>Phòng 322A process</documentation>
+    <startEvent id="sid-69557C07-BD0E-485D-A2A4-78BC34AAF518" flowable:initiator="init"></startEvent>
+    <userTask id="AnToanRiskAssessment" name="Laws Assessment" flowable:assignee="cong.vuchi" flowable:dueDate="P2D" flowable:formKey="P4M_ATXL#Button_4M_ATPC" flowable:priority="1">
+      <documentation>322A Section check Risk Assessment</documentation>
+      <extensionElements>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_SafetyLawNo" name="Law No" type="string"></flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_RelateSafe" name="Relate Safty Law" type="enum">
+          <flowable:value id="Y" name="Yes"></flowable:value>
+          <flowable:value id="N" name="No"></flowable:value>
+        </flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_SafetyAction" name="Safety Action to perform" type="string"></flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_EnvLawNo" name="Law No" type="string"></flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_EnvRelated" name="Env Related" type="enum">
+          <flowable:value id="Y" name="Yes"></flowable:value>
+          <flowable:value id="N" name="No"></flowable:value>
+        </flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_EnvAction" name="Env Action to perform" type="string"></flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4M_CBXL_BMC_P4M_CBXL_CB" name="Can bo xu ly" type="string"></flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4M_CBXL_BMC_P4M_CBXL_ND" name="Noi dung can bo xy ly" type="string"></flowable:formProperty>
+        <flowable:formProperty id="Button_4M_ATPC" name="Nút phòng an toàn xử lý" type="enum">
+          <flowable:value id="BT_4M_AT_PC" name="Assign to staff"></flowable:value>
+          <flowable:value id="BT_4M_AT_PD" name="Approve"></flowable:value>
+        </flowable:formProperty>
+        <flowable:taskListener event="create" class="vn.btmv.iworkflow.workflow.delegate.TaskAssignedMailListener"></flowable:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="sid-73BF8B10-C964-475F-BE72-ECD51A503A6C"></exclusiveGateway>
+    <subProcess id="sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F" name="subProcess">
+      <multiInstanceLoopCharacteristics isSequential="false" flowable:collection="P4M_CBATXL_BMC" flowable:elementVariable="element_var"></multiInstanceLoopCharacteristics>
+      <startEvent id="sid-E80E0A82-C397-43EE-B6DD-F09063B692EC"></startEvent>
+      <serviceTask id="sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C" name="Get data" flowable:class="vn.btmv.iworkflow.workflow.delegate.LoopItemVariablesDelegate"></serviceTask>
+      <userTask id="sid-2C21CB23-CAD0-425B-A356-F306BA6438D8" name="Staff check 4M Request" flowable:assignee="${P4M_CBXL_CB}" flowable:dueDate="P2D" flowable:formKey="P4M_CBXL" flowable:priority="1">
+        <documentation>An toan Staff check 4M Request</documentation>
+        <extensionElements>
+          <flowable:formProperty id="P4M_CBXL_CB" name="Can bo xu ly" type="string"></flowable:formProperty>
+          <flowable:formProperty id="P4M_CBXL_ND" name="Noi dung can bo xy ly" type="string"></flowable:formProperty>
+          <flowable:taskListener event="create" class="vn.btmv.iworkflow.workflow.delegate.TaskAssignedMailListener"></flowable:taskListener>
+        </extensionElements>
+      </userTask>
+      <endEvent id="sid-B1671398-E112-444E-859A-90A66003E09E"></endEvent>
+      <sequenceFlow id="sid-B5C7E6DB-63A5-407C-A9B9-A93758E6B121" sourceRef="sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C" targetRef="sid-2C21CB23-CAD0-425B-A356-F306BA6438D8"></sequenceFlow>
+      <sequenceFlow id="sid-7CFD2BB2-557B-4E47-ADCF-BAF81F9001E4" sourceRef="sid-2C21CB23-CAD0-425B-A356-F306BA6438D8" targetRef="sid-B1671398-E112-444E-859A-90A66003E09E"></sequenceFlow>
+      <sequenceFlow id="sid-F426B7A6-D9E4-4834-8531-49A71ABF6983" sourceRef="sid-E80E0A82-C397-43EE-B6DD-F09063B692EC" targetRef="sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C"></sequenceFlow>
+    </subProcess>
+    <sequenceFlow id="sid-57F88252-5774-451C-9715-EDFEB28C0F10" sourceRef="AnToanRiskAssessment" targetRef="sid-73BF8B10-C964-475F-BE72-ECD51A503A6C"></sequenceFlow>
+    <exclusiveGateway id="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B"></exclusiveGateway>
+    <userTask id="sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3" name="Laws Assessment" flowable:assignee="cong.vuchi" flowable:dueDate="P2D" flowable:formKey="P4M_ATXL#Button_4M_ATPC" flowable:priority="1">
+      <documentation>322A Section check Risk Assessment</documentation>
+      <extensionElements>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_SafetyLawNo" name="Law No" type="string"></flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_RelateSafe" name="Relate Safty Law" type="enum">
+          <flowable:value id="Y" name="Yes"></flowable:value>
+          <flowable:value id="N" name="No"></flowable:value>
+        </flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_SafetyAction" name="Safety Action to perform" type="string"></flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_EnvLawNo" name="Law No" type="string"></flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_EnvRelated" name="Env Related" type="enum">
+          <flowable:value id="Y" name="Yes"></flowable:value>
+          <flowable:value id="N" name="No"></flowable:value>
+        </flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4MForm_EnvAction" name="Env Action to perform" type="string"></flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4M_CBXL_BMC_P4M_CBXL_CB" name="Can bo xu ly" type="string"></flowable:formProperty>
+        <flowable:formProperty id="P4M_RiskAssessment_P4M_CBXL_BMC_P4M_CBXL_ND" name="Noi dung can bo xy ly" type="string"></flowable:formProperty>
+        <flowable:formProperty id="Button_4M_ATPC" name="Nút phòng an toàn xử lý" type="enum">
+          <flowable:value id="BT_4M_AT_PC" name="Assign to staff"></flowable:value>
+          <flowable:value id="BT_4M_AT_PD" name="Approve"></flowable:value>
+        </flowable:formProperty>
+        <flowable:taskListener event="create" class="vn.btmv.iworkflow.workflow.delegate.TaskAssignedMailListener"></flowable:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-FBB1F66D-377E-42A8-9E8F-BB400406A62F" sourceRef="sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F" targetRef="sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3"></sequenceFlow>
+    <endEvent id="sid-E1855242-2521-41E7-8693-EE725BC15235"></endEvent>
+    <sequenceFlow id="sid-C14DD54B-89C6-4D0C-8717-0170A0865409" name="Assignment" sourceRef="sid-73BF8B10-C964-475F-BE72-ECD51A503A6C" targetRef="sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_ATPC=='BT_4M_AT_PC'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-2B78CD15-1132-421E-A72E-F84D91A8D1FA" name="Assignment" sourceRef="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B" targetRef="sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_ATPC=='BT_4M_AT_PC'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-80CE2D9E-DBED-4E10-BCFB-81A372AFE9F5" sourceRef="sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3" targetRef="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B"></sequenceFlow>
+    <sequenceFlow id="sid-325650D7-00AA-49AD-B53D-EDE3D86CF2AF" name="Self-handing" sourceRef="sid-73BF8B10-C964-475F-BE72-ECD51A503A6C" targetRef="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_ATPC=='BT_4M_AT_PD'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-0B51FCB3-EE62-4F45-8D00-8625CBAC136D" name="Approve" sourceRef="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B" targetRef="sid-E1855242-2521-41E7-8693-EE725BC15235">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${Button_4M_ATPC=='BT_4M_AT_PD'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-73723408-9B10-4AED-A567-526911C27519" sourceRef="sid-69557C07-BD0E-485D-A2A4-78BC34AAF518" targetRef="AnToanRiskAssessment"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_AntoanProc_2510">
+    <bpmndi:BPMNPlane bpmnElement="AntoanProc_2510" id="BPMNPlane_AntoanProc_2510">
+      <bpmndi:BPMNShape bpmnElement="sid-69557C07-BD0E-485D-A2A4-78BC34AAF518" id="BPMNShape_sid-69557C07-BD0E-485D-A2A4-78BC34AAF518">
+        <omgdc:Bounds height="30.0" width="30.0" x="15.0" y="160.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="AnToanRiskAssessment" id="BPMNShape_AnToanRiskAssessment">
+        <omgdc:Bounds height="80.0" width="100.0" x="135.0" y="90.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-73BF8B10-C964-475F-BE72-ECD51A503A6C" id="BPMNShape_sid-73BF8B10-C964-475F-BE72-ECD51A503A6C">
+        <omgdc:Bounds height="40.0" width="40.0" x="300.0" y="145.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F" id="BPMNShape_sid-D61EFF21-C9C9-47B4-88B1-B711DB84902F">
+        <omgdc:Bounds height="163.0" width="355.0" x="360.0" y="210.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-E80E0A82-C397-43EE-B6DD-F09063B692EC" id="BPMNShape_sid-E80E0A82-C397-43EE-B6DD-F09063B692EC">
+        <omgdc:Bounds height="30.0" width="30.0" x="375.0" y="225.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C" id="BPMNShape_sid-A49B2152-FE78-45BE-BB9C-4955DE518B6C">
+        <omgdc:Bounds height="80.0" width="100.0" x="390.0" y="270.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-2C21CB23-CAD0-425B-A356-F306BA6438D8" id="BPMNShape_sid-2C21CB23-CAD0-425B-A356-F306BA6438D8">
+        <omgdc:Bounds height="80.0" width="100.0" x="510.0" y="260.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-B1671398-E112-444E-859A-90A66003E09E" id="BPMNShape_sid-B1671398-E112-444E-859A-90A66003E09E">
+        <omgdc:Bounds height="28.0" width="28.0" x="655.0" y="296.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-DEE2F0CF-386A-45C2-B921-58282A43E49B" id="BPMNShape_sid-DEE2F0CF-386A-45C2-B921-58282A43E49B">
+        <omgdc:Bounds height="40.0" width="40.0" x="840.0" y="145.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3" id="BPMNShape_sid-3D9A5C01-1A6D-4381-B8AF-39C8FEEB22D3">
+        <omgdc:Bounds height="80.0" width="100.0" x="780.0" y="210.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-E1855242-2521-41E7-8693-EE725BC15235" id="BPMNShape_sid-E1855242-2521-41E7-8693-EE725BC15235">
+        <omgdc:Bounds height="28.0" width="28.0" x="925.0" y="151.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-2B78CD15-1132-421E-A72E-F84D91A8D1FA" id="BPMNEdge_sid-2B78CD15-1132-421E-A72E-F84D91A8D1FA">
+        <omgdi:waypoint x="845.6347438752784" y="170.6347438752784"></omgdi:waypoint>
+        <omgdi:waypoint x="715.0" y="221.87596899224806"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-73723408-9B10-4AED-A567-526911C27519" id="BPMNEdge_sid-73723408-9B10-4AED-A567-526911C27519">
+        <omgdi:waypoint x="44.40519340130436" y="170.81784707704065"></omgdi:waypoint>
+        <omgdi:waypoint x="135.0" y="144.51612903225805"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-80CE2D9E-DBED-4E10-BCFB-81A372AFE9F5" id="BPMNEdge_sid-80CE2D9E-DBED-4E10-BCFB-81A372AFE9F5">
+        <omgdi:waypoint x="844.1176470588235" y="210.0"></omgdi:waypoint>
+        <omgdi:waypoint x="854.7826086956521" y="179.7826086956522"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-F426B7A6-D9E4-4834-8531-49A71ABF6983" id="BPMNEdge_sid-F426B7A6-D9E4-4834-8531-49A71ABF6983">
+        <omgdi:waypoint x="398.71857290578646" y="252.20600206810101"></omgdi:waypoint>
+        <omgdi:waypoint x="411.42857142857144" y="270.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-FBB1F66D-377E-42A8-9E8F-BB400406A62F" id="BPMNEdge_sid-FBB1F66D-377E-42A8-9E8F-BB400406A62F">
+        <omgdi:waypoint x="715.0" y="291.5"></omgdi:waypoint>
+        <omgdi:waypoint x="747.0" y="291.5"></omgdi:waypoint>
+        <omgdi:waypoint x="747.0" y="250.0"></omgdi:waypoint>
+        <omgdi:waypoint x="780.0" y="250.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-0B51FCB3-EE62-4F45-8D00-8625CBAC136D" id="BPMNEdge_sid-0B51FCB3-EE62-4F45-8D00-8625CBAC136D">
+        <omgdi:waypoint x="880.0" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="925.0" y="165.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-57F88252-5774-451C-9715-EDFEB28C0F10" id="BPMNEdge_sid-57F88252-5774-451C-9715-EDFEB28C0F10">
+        <omgdi:waypoint x="235.0" y="142.96296296296296"></omgdi:waypoint>
+        <omgdi:waypoint x="304.11764705882354" y="160.88235294117646"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-325650D7-00AA-49AD-B53D-EDE3D86CF2AF" id="BPMNEdge_sid-325650D7-00AA-49AD-B53D-EDE3D86CF2AF">
+        <omgdi:waypoint x="340.0" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="840.0" y="165.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-7CFD2BB2-557B-4E47-ADCF-BAF81F9001E4" id="BPMNEdge_sid-7CFD2BB2-557B-4E47-ADCF-BAF81F9001E4">
+        <omgdi:waypoint x="610.0" y="306.8965517241379"></omgdi:waypoint>
+        <omgdi:waypoint x="632.5" y="310.0"></omgdi:waypoint>
+        <omgdi:waypoint x="632.5" y="320.0"></omgdi:waypoint>
+        <omgdi:waypoint x="655.4975839842836" y="313.6992920591004"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B5C7E6DB-63A5-407C-A9B9-A93758E6B121" id="BPMNEdge_sid-B5C7E6DB-63A5-407C-A9B9-A93758E6B121">
+        <omgdi:waypoint x="490.0" y="305.8333333333333"></omgdi:waypoint>
+        <omgdi:waypoint x="510.0" y="304.1666666666667"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-C14DD54B-89C6-4D0C-8717-0170A0865409" id="BPMNEdge_sid-C14DD54B-89C6-4D0C-8717-0170A0865409">
+        <omgdi:waypoint x="320.0" y="185.0"></omgdi:waypoint>
+        <omgdi:waypoint x="320.0" y="291.5"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="291.5"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
