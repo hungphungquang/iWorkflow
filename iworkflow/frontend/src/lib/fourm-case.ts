@@ -37,7 +37,8 @@ export type CaseEvent = {
 };
 export type Comment = { id: number; at: string; by: string; text: string; mentions: string[] };
 export type Share = { at: string; by: string; to: string[]; emails: string[]; note: string };
-export type Attachment = { name: string; size: string; by: string; at: string };
+/** `id` is set only when the file content can be fetched from /api/4m/attachments/{id} (iw_prod). */
+export type Attachment = { id?: string; name: string; size: string; by: string; at: string };
 
 export type FourMCase = RequestData & {
   code: string;
@@ -55,6 +56,8 @@ export type FourMCase = RequestData & {
   createdAt: string;
   updatedAt: string;
   endedAt?: string;
+  /** When phase 1 (request approval) finished and phase 2 (Process4MChangeResult) started. */
+  phase2At?: string;
   events: CaseEvent[];
   comments: Comment[];
   shares: Share[];
@@ -131,6 +134,28 @@ export const sectionLabel = (code: string) => {
 
 export const caseState = (c: FourMCase): CaseState => c.sim.ended ?? "running";
 export const phaseOf = (c: FourMCase) => (c.sim.step ? stepById(c.sim.step).phase : c.sim.visited.includes("result") ? "after" : "before");
+
+/**
+ * Running cases that passed phase 1 but have not finished phase 2:
+ * "todo" = result never submitted yet (waiting at "Nhập kết quả"), "doing" = result submitted and in review (or returned for correction).
+ */
+export type Phase2Status = "todo" | "doing";
+export function phase2Status(c: FourMCase): Phase2Status | null {
+  if (caseState(c) !== "running" || !c.sim.step || stepById(c.sim.step).phase !== "after") return null;
+  return c.sim.step === "result" && !c.sim.visited.includes("rmgr") ? "todo" : "doing";
+}
+/** Days since phase 2 started (falls back to the current step's start for data saved before `phase2At` existed). */
+export const phase2Days = (c: FourMCase, now: string) => Math.max(0, hoursBetween(c.phase2At ?? c.stepSince, now) / 24);
+
+export const PHASE2_AGES = [
+  { id: "30", label: "≤ 30 ngày", labelEn: "≤ 30 days", max: 30 },
+  { id: "90", label: "31–90 ngày", labelEn: "31–90 days", max: 90 },
+  { id: "180", label: "91–180 ngày", labelEn: "91–180 days", max: 180 },
+  { id: "365", label: "181–365 ngày", labelEn: "181–365 days", max: 365 },
+  { id: "old", label: "> 1 năm", labelEn: "> 1 year", max: Infinity },
+] as const;
+export type Phase2Age = (typeof PHASE2_AGES)[number]["id"];
+export const phase2AgeOf = (days: number): Phase2Age => PHASE2_AGES.find((b) => days <= b.max)!.id;
 
 export function runProgress(c: FourMCase) {
   const runs = c.sim.runs;
@@ -329,6 +354,7 @@ export function applyCase(c: FourMCase, a: CaseAction, actor: string, at: string
       n.runSince = since;
     }
     if (n.sim.ended && !c.sim.ended) n.endedAt = at;
+    if (!n.phase2At && n.sim.visited.includes("result") && !c.sim.visited.includes("result")) n.phase2At = at;
 
     const after = openTasks(n);
     const fresh = after.filter((t) => !before.some((b) => b.id === t.id));

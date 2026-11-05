@@ -13,6 +13,10 @@ import {
   dueStatus,
   openTasks,
   participants,
+  PHASE2_AGES,
+  phase2AgeOf,
+  phase2Days,
+  phase2Status,
   PROCESS_KEY,
   PROCESS_NAME,
   searchCase,
@@ -24,6 +28,7 @@ import {
   type DueStatus,
   type FourMCase,
   type OpenTask,
+  type Phase2Status,
   type SearchHit,
 } from "@/lib/fourm-case";
 import { fmtDate, fmtDateTime, useLocale } from "@/lib/i18n";
@@ -42,7 +47,8 @@ const views: { id: View; label: string; hint: string }[] = [
 type Row = { c: FourMCase; task?: OpenTask; due?: string; hits: SearchHit[] };
 type SortKey = "due" | "updated" | "created" | "code";
 
-const FILTER_KEYS = ["q", "step", "sec", "rsec", "assignee", "cls", "due", "state", "ver", "from", "to"] as const;
+const FILTER_KEYS = ["q", "step", "sec", "rsec", "assignee", "cls", "due", "state", "ver", "from", "to", "p2", "p2age"] as const;
+const p2Text: Record<Phase2Status, string> = { todo: "Chưa thực hiện GĐ2", doing: "Đang thực hiện GĐ2" };
 const dueText: Record<DueStatus, string> = { overdue: "Quá hạn", dueSoon: "Sắp đến hạn", normal: "Trong hạn" };
 const stateText: Record<CaseState, string> = { running: "Đang xử lý", completed: "Hoàn tất", rejected: "Từ chối", cancelled: "Đã hủy" };
 
@@ -93,6 +99,11 @@ export function CaseList() {
       if (f.assignee && !ts.some((t) => t.assignee === f.assignee)) continue;
       if (f.from && c.createdAt.slice(0, 10) < f.from) continue;
       if (f.to && c.createdAt.slice(0, 10) > f.to) continue;
+      if (f.p2 || f.p2age) {
+        const p2 = phase2Status(c);
+        if (!p2 || (f.p2 && f.p2 !== "all" && p2 !== f.p2)) continue;
+        if (f.p2age && phase2AgeOf(phase2Days(c, db.now)) !== f.p2age) continue;
+      }
       const hits = f.q ? searchCase(c, f.q) : [];
       if (hits === null) continue;
       const candidates = view === "mine" ? ts.filter((t) => t.assignee === me) : [undefined];
@@ -134,6 +145,10 @@ export function CaseList() {
         return `Tạo từ ${v}`;
       case "to":
         return `Tạo đến ${v}`;
+      case "p2":
+        return p2Text[v as Phase2Status] ?? "Đã xong GĐ1, chưa xong GĐ2";
+      case "p2age":
+        return `Chờ từ khi xong GĐ1: ${PHASE2_AGES.find((b) => b.id === v)?.label ?? v}`;
     }
     return `${k}: ${v}`;
   };

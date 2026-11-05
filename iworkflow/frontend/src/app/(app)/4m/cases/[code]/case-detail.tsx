@@ -5,6 +5,7 @@ import { use, useState, type ReactNode } from "react";
 import { Bell, BellOff, Check, Copy, Mail, MessageSquare, Paperclip, Send, Share2, X } from "lucide-react";
 import { Avatar, CaseStateBadge, DueBadge, Stepper, VersionTag } from "@/components/fourm-ui";
 import { FourMRequestForm } from "@/components/fourm-request-form";
+import { AttachmentViewer, registerLocalFile } from "@/components/attachment-viewer";
 import { Badge, Card, Field, buttonClass, inputClass } from "@/components/ui";
 import { classOptions, riskFields, stepById, TPPC, type Decision, type SectionRunStatus } from "@/lib/fourm";
 import {
@@ -886,12 +887,22 @@ function Talk({ c, onDone }: { c: FourMCase; onDone: (m: string) => void }) {
 }
 
 function Files({ c, onDone }: { c: FourMCase; onDone: (m: string) => void }) {
+  const [viewing, setViewing] = useState<number | null>(null);
   return (
     <div className="space-y-2">
       {c.attachments.length === 0 && <p className="text-xs text-slate-400">Chưa có tệp đính kèm.</p>}
-      <ul className="space-y-1.5">
+      <ul className="space-y-0.5">
         {c.attachments.map((a, i) => (
-          <li key={i} className="flex items-center gap-2 text-xs">
+          <li
+            key={i}
+            tabIndex={0}
+            title={`${a.name}\nNhấp đúp để xem`}
+            onDoubleClick={() => setViewing(i)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") setViewing(i);
+            }}
+            className="-mx-1.5 flex cursor-pointer select-none items-center gap-2 rounded px-1.5 py-1 text-xs hover:bg-slate-50 focus:bg-blue-50 focus:outline-none"
+          >
             <Paperclip className="h-3.5 w-3.5 shrink-0 text-slate-400" />
             <span className="min-w-0 flex-1 truncate font-medium text-slate-700">{a.name}</span>
             <span className="text-slate-400">{a.size}</span>
@@ -901,6 +912,8 @@ function Files({ c, onDone }: { c: FourMCase; onDone: (m: string) => void }) {
           </li>
         ))}
       </ul>
+      {c.attachments.length > 0 && <p className="text-[11px] text-slate-400">Nhấp đúp vào tệp để xem.</p>}
+      {viewing !== null && <AttachmentViewer caseCode={c.code} items={c.attachments} index={viewing} onIndex={setViewing} onClose={() => setViewing(null)} />}
       {!READ_ONLY && (
       <label className={`${buttonClass("ghost")} cursor-pointer`}>
         <Paperclip className="h-4 w-4" /> Thêm tệp
@@ -910,7 +923,10 @@ function Files({ c, onDone }: { c: FourMCase; onDone: (m: string) => void }) {
           className="sr-only"
           onChange={(e) => {
             const files = Array.from(e.target.files ?? []);
-            files.forEach((f) => act(c.code, { type: "attach", name: f.name, size: f.size > 1e6 ? `${(f.size / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(f.size / 1e3))} KB` }));
+            files.forEach((f) => {
+              registerLocalFile(c.code, f);
+              act(c.code, { type: "attach", name: f.name, size: f.size > 1e6 ? `${(f.size / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(f.size / 1e3))} KB` });
+            });
             if (files.length) onDone(`Đã đính kèm ${files.length} tệp`);
             e.target.value = "";
           }}

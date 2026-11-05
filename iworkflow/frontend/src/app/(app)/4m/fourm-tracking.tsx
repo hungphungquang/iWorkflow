@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Donut, HBarChart } from "@/components/charts";
 import { Card, LinkButton, PageHeader, StatCard, WireNote } from "@/components/ui";
 import { classOptions, sections, stats, type FourMStepId, type SectionRunStatus } from "@/lib/fourm";
-import { caseState, dueStatus, hoursBetween, openTasks, sectionShort, type FourMCase, type OpenTask } from "@/lib/fourm-case";
+import { caseState, dueStatus, hoursBetween, openTasks, PHASE2_AGES, phase2AgeOf, phase2Days, phase2Status, sectionShort, type FourMCase, type OpenTask } from "@/lib/fourm-case";
 import { common, fmtNum, intlTag, stepNames, useLocale, useMessages, type Locale } from "@/lib/i18n";
 import { personName } from "@/lib/people";
 import { useDb } from "@/lib/store";
@@ -49,6 +49,20 @@ const vi = {
   colLate: "% trễ",
   historyHint: "Điểm nghẽn lớn nhất là bước Nhập kết quả (trung vị 33 ngày) và phòng liên quan (P90 ~28 ngày) – đây là lý do dashboard ưu tiên hiển thị việc quá hạn theo phòng.",
   topSections: "Phòng ban nhận nhiều việc thẩm định nhất (hệ cũ)",
+  p2Title: "Đã kết thúc giai đoạn 1 nhưng chưa kết thúc giai đoạn 2",
+  p2Hint: "Hồ sơ đang chạy đã được các phòng liên quan phê duyệt (xong GĐ1 – Before change) nhưng chưa nhập kết quả hoặc kết quả chưa được phê duyệt xong (GĐ2 – After change). Tuổi tính từ lúc kết thúc GĐ1.",
+  p2Todo: "Chưa thực hiện GĐ2",
+  p2TodoHint: "chờ nhập kết quả lần đầu",
+  p2Doing: "Đang thực hiện GĐ2",
+  p2DoingHint: "đã nhập kết quả, chưa duyệt xong",
+  p2Median: (d: string) => `Trung vị chờ: ${d} ngày`,
+  p2ByStep: "Theo bước hiện tại",
+  p2ResultTodo: "Nhập kết quả – chưa thực hiện",
+  p2ResultRedo: "Nhập kết quả – làm lại",
+  p2ByAge: "Theo thời gian kể từ khi xong GĐ1",
+  p2BySection: "Theo đơn vị đề nghị",
+  p2None: "Không có hồ sơ nào đang chờ giai đoạn 2.",
+  p2AgeLabel: (b: (typeof PHASE2_AGES)[number]): string => b.label,
   wire: "Phản hồi #5 (tùy chỉnh widget) được xếp vào giai đoạn C: giai đoạn A dùng bố cục cố định, mọi ô số liệu đều bấm được để mở danh sách đã lọc. Phản hồi #7: dashboard và menu đã có tiếng Việt / English (nút VI·EN trên thanh trên cùng).",
 };
 
@@ -93,6 +107,20 @@ const M: Record<Locale, typeof vi> = {
     colLate: "% late",
     historyHint: "The biggest bottlenecks are Input result (median 33 days) and related sections (P90 ~28 days) – which is why this dashboard highlights overdue work by section.",
     topSections: "Sections receiving the most review tasks (legacy)",
+    p2Title: "Phase 1 finished, phase 2 not finished",
+    p2Hint: "Running cases already approved by all related sections (phase 1 – Before change) whose result has not been entered yet or is still being approved (phase 2 – After change). Age counts from the end of phase 1.",
+    p2Todo: "Phase 2 not started",
+    p2TodoHint: "waiting for the first result input",
+    p2Doing: "Phase 2 in progress",
+    p2DoingHint: "result entered, approval pending",
+    p2Median: (d) => `Median wait: ${d} days`,
+    p2ByStep: "By current step",
+    p2ResultTodo: "Input result – not started",
+    p2ResultRedo: "Input result – rework",
+    p2ByAge: "By time since phase 1 ended",
+    p2BySection: "By requesting section",
+    p2None: "No cases waiting in phase 2.",
+    p2AgeLabel: (b) => b.labelEn,
     wire: "Feedback #5 (customisable widgets) is scheduled for phase C: phase A uses a fixed layout where every figure drills down to a filtered list. Feedback #7: dashboards and navigation now support Tiếng Việt / English (VI·EN switch in the top bar).",
   },
 };
@@ -153,6 +181,34 @@ export function FourMTracking() {
   const classBars = classOptions.map((o) => ({ label: o.label, value: cases.filter((c) => c.classes.includes(o.code)).length, href: `/4m/cases?view=all&cls=${o.code}`, tone: "violet" as const }));
   const worst = [...overdue].sort((a, b) => a.due.localeCompare(b.due)).slice(0, 8);
 
+  const p2 = running.flatMap((c) => {
+    const st = phase2Status(c);
+    return st ? [{ c, st, days: phase2Days(c, now) }] : [];
+  });
+  const p2Todo = p2.filter((x) => x.st === "todo");
+  const p2Doing = p2.filter((x) => x.st === "doing");
+  const p2Steps = [
+    { label: t.p2ResultTodo, value: p2Todo.length, href: "/4m/cases?view=all&p2=todo", tone: "amber" as const },
+    { label: t.p2ResultRedo, value: p2Doing.filter((x) => x.c.sim.step === "result").length, href: "/4m/cases?view=all&p2=doing&step=result", tone: "blue" as const },
+    ...(["rmgr", "rgm", "rrelsec", "rgd", "review"] as const).map((s) => ({
+      label: stepNames[locale][s],
+      value: p2Doing.filter((x) => x.c.sim.step === s).length,
+      href: `/4m/cases?view=all&p2=doing&step=${s}`,
+      tone: "blue" as const,
+    })),
+  ];
+  const p2Ages = PHASE2_AGES.map((b) => {
+    const inB = p2.filter((x) => phase2AgeOf(x.days) === b.id);
+    return { b, todo: inB.filter((x) => x.st === "todo").length, doing: inB.filter((x) => x.st === "doing").length };
+  });
+  const p2AgeMax = Math.max(1, ...p2Ages.map((a) => a.todo + a.doing));
+  const p2Sec = new Map<string, number>();
+  p2.forEach((x) => p2Sec.set(x.c.section, (p2Sec.get(x.c.section) ?? 0) + 1));
+  const p2SecBars = [...p2Sec.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([sec, n]) => ({ label: `${sec} ${sectionShort(sec)}`, value: n, tone: "violet" as const, href: `/4m/cases?view=all&p2=all&sec=${sec}` }));
+
   return (
     <>
       <PageHeader
@@ -190,6 +246,78 @@ export function FourMTracking() {
         </Card>
         <Card title={t.states}>
           <Donut segments={stateSegs} centerLabel={c0.cases} locale={tag} />
+        </Card>
+
+        <Card title={t.p2Title} className="xl:col-span-3" actions={<CardLink href="/4m/cases?view=all&p2=all">{c0.viewAll}</CardLink>}>
+          <p className="-mt-1 mb-3 text-[11px] text-slate-500">{t.p2Hint}</p>
+          {p2.length ? (
+            <div className="grid gap-5 lg:grid-cols-3">
+              <div>
+                <div className="mb-3 grid grid-cols-2 gap-2">
+                  {[
+                    { k: "todo", label: t.p2Todo, hint: t.p2TodoHint, list: p2Todo, cls: "border-amber-200 bg-amber-50 text-amber-900" },
+                    { k: "doing", label: t.p2Doing, hint: t.p2DoingHint, list: p2Doing, cls: "border-blue-200 bg-blue-50 text-blue-900" },
+                  ].map((x) => (
+                    <Link key={x.k} href={`/4m/cases?view=all&p2=${x.k}`} className={`rounded-lg border px-3 py-2 hover:ring-2 hover:ring-blue-300 ${x.cls}`}>
+                      <div className="text-[11px] font-medium">{x.label}</div>
+                      <div className="text-2xl font-semibold tabular-nums">{fmtNum(x.list.length, locale)}</div>
+                      <div className="text-[10px] opacity-75">{x.hint}</div>
+                      <div className="mt-0.5 text-[10px] opacity-75">{t.p2Median(fmtNum(median(x.list.map((y) => y.days)), locale, 0))}</div>
+                    </Link>
+                  ))}
+                </div>
+                <div className="mb-1 text-[11px] font-medium text-slate-500">{t.p2ByStep}</div>
+                <HBarChart data={p2Steps} locale={tag} labelWidth="13rem" />
+              </div>
+              <div>
+                <div className="mb-2 flex items-center justify-between text-[11px] font-medium text-slate-500">
+                  <span>{t.p2ByAge}</span>
+                  <span className="flex gap-3 font-normal">
+                    <span className="flex items-center gap-1">
+                      <span className="h-2 w-2 rounded-sm bg-amber-500" />
+                      {t.p2Todo}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="h-2 w-2 rounded-sm bg-blue-500" />
+                      {t.p2Doing}
+                    </span>
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {p2Ages.map(({ b, todo, doing }) => (
+                    <div key={b.id} className="flex items-center gap-2 text-xs">
+                      <Link href={`/4m/cases?view=all&p2=all&p2age=${b.id}`} className="w-24 shrink-0 text-slate-600 hover:text-blue-700">
+                        {t.p2AgeLabel(b)}
+                      </Link>
+                      <div className="flex h-4 flex-1 overflow-hidden rounded bg-slate-100">
+                        {todo > 0 && (
+                          <Link href={`/4m/cases?view=all&p2=todo&p2age=${b.id}`} title={`${t.p2Todo}: ${todo}`} className="block h-full bg-amber-500 hover:opacity-80" style={{ width: `${(todo / p2AgeMax) * 100}%` }} />
+                        )}
+                        {doing > 0 && (
+                          <Link href={`/4m/cases?view=all&p2=doing&p2age=${b.id}`} title={`${t.p2Doing}: ${doing}`} className="block h-full bg-blue-500 hover:opacity-80" style={{ width: `${(doing / p2AgeMax) * 100}%` }} />
+                        )}
+                      </div>
+                      <span className="w-20 shrink-0 whitespace-nowrap text-right tabular-nums text-slate-700">
+                        <span className="font-semibold">{todo + doing}</span>
+                        {todo + doing > 0 && (
+                          <span className="text-[10px] text-slate-400">
+                            {" "}
+                            ({todo}/{doing})
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div className="mb-1 text-[11px] font-medium text-slate-500">{t.p2BySection}</div>
+                <HBarChart data={p2SecBars} locale={tag} labelWidth="9rem" />
+              </div>
+            </div>
+          ) : (
+            <Empty>{t.p2None}</Empty>
+          )}
         </Card>
 
         <Card title={t.heat} className="xl:col-span-2">

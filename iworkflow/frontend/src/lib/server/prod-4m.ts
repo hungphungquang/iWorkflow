@@ -102,11 +102,13 @@ type ProcRow = { id: string; key: string; version: number; parent: string | null
 type TaskRow = { id: string; proc: string; key: string; name: string; assignee: string | null; start: Date; end: Date | null; deleteReason: string | null };
 type VarRow = { proc: string; name: string; text: string | null; long: string | null; bytes: string | null };
 type CommentRow = { proc: string; task: string | null; by: string; at: Date; text: string | null };
-type AttachRow = { proc: string; name: string; type: string | null; by: string; at: Date };
+type AttachRow = { id: string; proc: string; name: string; type: string | null; by: string; at: Date; size: number | null };
 type ActionRow = { proc: string; task: string | null; by: string; action: string; label: string | null; at: Date };
 type UnitRow = { id: string; ma: string; ten: string; parent: string | null; manager: string | null; gm: string | null; status: number };
 
 const iso = (d: Date | null | undefined) => (d ? d.toISOString() : "");
+const attachmentName = (a: { name: string; type: string | null }) =>
+  a.type && !a.name.toLowerCase().endsWith(`.${a.type.toLowerCase()}`) ? `${a.name}.${a.type}` : a.name;
 const day = (s: string | undefined) => {
   if (!s) return "";
   const t = s.trim();
@@ -240,8 +242,9 @@ async function loadRaw() {
       [ids],
     ),
     db.query(
-      `select proc_inst_id_ as proc, name_ as name, type_ as type, user_id_ as "by", time_ as at
-         from act_hi_attachment where proc_inst_id_ = any($1::text[]) order by time_`,
+      `select a.id_ as id, a.proc_inst_id_ as proc, a.name_ as name, a.type_ as type, a.user_id_ as "by", a.time_ as at, length(b.bytes_) as size
+         from act_hi_attachment a left join act_ge_bytearray b on b.id_ = a.content_id_
+        where a.proc_inst_id_ = any($1::text[]) order by a.time_`,
       [ids],
     ),
     db.query(
@@ -494,7 +497,13 @@ function mapCases(raw: Raw) {
       .map((c, i) => ({ id: i + 1, at: iso(c.at), by: c.by, text: c.text!.trim(), mentions: [] }));
     const attachments: Attachment[] = family
       .flatMap((p) => attachOf.get(p.id) ?? [])
-      .map((a) => ({ name: a.type && !a.name.toLowerCase().endsWith(`.${a.type.toLowerCase()}`) ? `${a.name}.${a.type}` : a.name, size: "—", by: a.by, at: iso(a.at) }));
+      .map((a) => ({
+        id: a.size != null ? a.id : undefined,
+        name: attachmentName(a),
+        size: a.size == null ? "—" : a.size > 1e6 ? `${(a.size / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(a.size / 1e3))} KB`,
+        by: a.by,
+        at: iso(a.at),
+      }));
 
     const ehs: Record<string, string> = {};
     for (const g of [...rform.groups, ...form.groups].filter((x) => x.ma === "RiskAssessment_BMC")) {
@@ -543,6 +552,7 @@ function mapCases(raw: Raw) {
       createdAt: iso(root.start),
       updatedAt: iso(lastTouch),
       endedAt: root.end ? iso(root.end) : undefined,
+      phase2At: res[0] ? iso(res[0].start) : undefined,
       events,
       comments,
       shares: [],
@@ -649,9 +659,29 @@ export async function getProdSnapshot(refresh = false): Promise<ProdSnapshot> {
     const now = new Date().toISOString();
     const snap: ProdSnapshot = { source: "iw_prod", loadedAt: now, now, defaultMe: process.env.IW_DEFAULT_USER ?? "hung.phungquang", cases, ...dir };
     cache = { at: Date.now(), snap };
+    attachmentIds = null;
     return snap;
   })().finally(() => {
     inflight = null;
   });
   return inflight;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Attachment content (only files that belong to a case in the snapshot can be read)
+// ---------------------------------------------------------------------------------------------
+
+let attachmentIds: Set<string> | null = null;
+
+export async function getProdAttachment(id: string): Promise<{ name: string; bytes: Buffer } | null> {
+  const snap = await getProdSnapshot();
+  attachmentIds ??= new Set(snap.cases.flatMap((c) => c.attachments.flatMap((a) => (a.id ? [a.id] : []))));
+  if (!attachmentIds.has(id)) return null;
+  const r = await getPool().query(
+    `select a.name_ as name, a.type_ as type, b.bytes_ as bytes
+       from act_hi_attachment a join act_ge_bytearray b on b.id_ = a.content_id_ where a.id_ = $1`,
+    [id],
+  );
+  const row = r.rows[0] as { name: string; type: string | null; bytes: Buffer } | undefined;
+  return row ? { name: attachmentName(row), bytes: row.bytes } : null;
 }
