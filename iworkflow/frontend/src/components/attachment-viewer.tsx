@@ -4,8 +4,58 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Download, ExternalLink, FileQuestionMark, LoaderCircle, X, ZoomIn, ZoomOut } from "lucide-react";
 import { fileKind } from "@/lib/file-types";
 import type { Attachment } from "@/lib/fourm-case";
-import { fmtDateTime } from "@/lib/i18n";
+import { fmtDateTime, useLocale, useMessages, type Locale } from "@/lib/i18n";
 import { personName } from "@/lib/people";
+
+const vi = {
+  viewFile: (name: string) => `Xem tệp ${name}`,
+  openTab: "Mở trong tab mới",
+  download: "Tải xuống",
+  close: "Đóng",
+  closeEsc: "Đóng (Esc)",
+  prev: "Tệp trước",
+  prevKey: "Tệp trước (←)",
+  next: "Tệp sau",
+  nextKey: "Tệp sau (→)",
+  noContent: "Tệp này không có nội dung lưu trên hệ thống (chỉ còn tên tệp).",
+  noPreview: "Chưa hỗ trợ xem trước loại tệp này.",
+  loading: "Đang tải…",
+  imageFailed: "Không tải được ảnh.",
+  zoomOut: "Thu nhỏ",
+  zoomIn: "Phóng to",
+  fitToggle: "Vừa khung / 100%",
+  fit: "Vừa",
+  httpError: (status: number) => `Không tải được tệp (HTTP ${status}).`,
+  sheetError: (e: string) => `Không đọc được bảng tính: ${e}`,
+  emptySheet: "Trang tính trống.",
+  truncated: (rows: number, cols: number) => `Chỉ hiển thị ${rows} dòng × ${cols} cột đầu – tải xuống để xem đầy đủ.`,
+};
+const M = {
+  vi,
+  en: {
+    viewFile: (name) => `View file ${name}`,
+    openTab: "Open in new tab",
+    download: "Download",
+    close: "Close",
+    closeEsc: "Close (Esc)",
+    prev: "Previous file",
+    prevKey: "Previous file (←)",
+    next: "Next file",
+    nextKey: "Next file (→)",
+    noContent: "This file has no stored content on the system (only its name is kept).",
+    noPreview: "Preview is not supported for this file type yet.",
+    loading: "Loading…",
+    imageFailed: "Could not load the image.",
+    zoomOut: "Zoom out",
+    zoomIn: "Zoom in",
+    fitToggle: "Fit / 100%",
+    fit: "Fit",
+    httpError: (status) => `Could not load the file (HTTP ${status}).`,
+    sheetError: (e) => `Could not read the spreadsheet: ${e}`,
+    emptySheet: "Empty sheet.",
+    truncated: (rows, cols) => `Showing only the first ${rows} rows × ${cols} columns – download to see everything.`,
+  },
+} satisfies Record<Locale, typeof vi>;
 
 // ---------------------------------------------------------------------------------------------
 // Demo mode keeps uploaded files in memory only (the persisted case stores just name + size).
@@ -47,6 +97,8 @@ export function AttachmentViewer({
   onIndex: (i: number) => void;
   onClose: () => void;
 }) {
+  const t = useMessages(M);
+  const locale = useLocale();
   const a = items[index];
   const src = a ? sourceOf(caseCode, a) : null;
   const kind = a ? fileKind(a.name) : "other";
@@ -72,14 +124,14 @@ export function AttachmentViewer({
   const iconBtn = "inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-200 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent";
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-slate-950/95 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={`Xem tệp ${a.name}`} onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex flex-col bg-slate-950/95 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={t.viewFile(a.name)} onClick={onClose}>
       <div className="flex items-center gap-2 border-b border-white/10 px-4 py-2 text-slate-100" onClick={(e) => e.stopPropagation()}>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold" title={a.name}>
             {a.name}
           </p>
           <p className="truncate text-xs text-slate-400">
-            {[a.size !== "—" ? a.size : "", personName(a.by), a.at ? fmtDateTime(a.at, "vi") : ""].filter(Boolean).join(" · ")}
+            {[a.size !== "—" ? a.size : "", personName(a.by), a.at ? fmtDateTime(a.at, locale) : ""].filter(Boolean).join(" · ")}
           </p>
         </div>
         {items.length > 1 && (
@@ -89,15 +141,15 @@ export function AttachmentViewer({
         )}
         {src && (
           <>
-            <a href={src.view} target="_blank" rel="noopener noreferrer" className={iconBtn} title="Mở trong tab mới" aria-label="Mở trong tab mới">
+            <a href={src.view} target="_blank" rel="noopener noreferrer" className={iconBtn} title={t.openTab} aria-label={t.openTab}>
               <ExternalLink className="h-4 w-4" />
             </a>
-            <a href={src.download} download={a.name} className={iconBtn} title="Tải xuống" aria-label="Tải xuống">
+            <a href={src.download} download={a.name} className={iconBtn} title={t.download} aria-label={t.download}>
               <Download className="h-4 w-4" />
             </a>
           </>
         )}
-        <button type="button" className={iconBtn} onClick={onClose} title="Đóng (Esc)" aria-label="Đóng" autoFocus>
+        <button type="button" className={iconBtn} onClick={onClose} title={t.closeEsc} aria-label={t.close} autoFocus>
           <X className="h-5 w-5" />
         </button>
       </div>
@@ -111,8 +163,8 @@ export function AttachmentViewer({
               e.stopPropagation();
               onIndex(index - 1);
             }}
-            aria-label="Tệp trước"
-            title="Tệp trước (←)"
+            aria-label={t.prev}
+            title={t.prevKey}
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
@@ -125,15 +177,15 @@ export function AttachmentViewer({
               e.stopPropagation();
               onIndex(index + 1);
             }}
-            aria-label="Tệp sau"
-            title="Tệp sau (→)"
+            aria-label={t.next}
+            title={t.nextKey}
           >
             <ChevronRight className="h-6 w-6" />
           </button>
         )}
         <div className="h-full p-4 sm:px-16">
           {!src ? (
-            <Unsupported name={a.name} reason="Tệp này không có nội dung lưu trên hệ thống (chỉ còn tên tệp)." />
+            <Unsupported name={a.name} reason={t.noContent} />
           ) : kind === "image" ? (
             <ImageView key={src.view} src={src.view} name={a.name} />
           ) : kind === "pdf" ? (
@@ -143,7 +195,7 @@ export function AttachmentViewer({
           ) : kind === "text" ? (
             <TextView key={src.view} src={src.view} />
           ) : (
-            <Unsupported name={a.name} reason="Chưa hỗ trợ xem trước loại tệp này." download={src.download} />
+            <Unsupported name={a.name} reason={t.noPreview} download={src.download} />
           )}
         </div>
       </div>
@@ -152,6 +204,7 @@ export function AttachmentViewer({
 }
 
 function Unsupported({ name, reason, download }: { name: string; reason: string; download?: string }) {
+  const t = useMessages(M);
   return (
     <div className="flex h-full items-center justify-center">
       <div className="max-w-sm rounded-lg bg-white p-6 text-center shadow-xl" onClick={(e) => e.stopPropagation()}>
@@ -160,7 +213,7 @@ function Unsupported({ name, reason, download }: { name: string; reason: string;
         <p className="mt-1 text-xs text-slate-500">{reason}</p>
         {download && (
           <a href={download} download={name} className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">
-            <Download className="h-4 w-4" /> Tải xuống
+            <Download className="h-4 w-4" /> {t.download}
           </a>
         )}
       </div>
@@ -169,9 +222,10 @@ function Unsupported({ name, reason, download }: { name: string; reason: string;
 }
 
 function Loading() {
+  const t = useMessages(M);
   return (
     <div className="flex h-full items-center justify-center text-sm text-slate-300">
-      <LoaderCircle className="mr-2 h-5 w-5 animate-spin" /> Đang tải…
+      <LoaderCircle className="mr-2 h-5 w-5 animate-spin" /> {t.loading}
     </div>
   );
 }
@@ -189,10 +243,11 @@ function ErrorBox({ message }: { message: string }) {
 const ZOOMS = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4];
 
 function ImageView({ src, name }: { src: string; name: string }) {
+  const t = useMessages(M);
   const [zoom, setZoom] = useState<number | "fit">("fit");
   const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
   const [failed, setFailed] = useState(false);
-  if (failed) return <ErrorBox message="Không tải được ảnh." />;
+  if (failed) return <ErrorBox message={t.imageFailed} />;
 
   const current = zoom === "fit" ? 1 : zoom;
   const step = (dir: 1 | -1) => {
@@ -220,13 +275,13 @@ function ImageView({ src, name }: { src: string; name: string }) {
       </div>
       {!natural && <div className="absolute inset-0">{<Loading />}</div>}
       <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-md bg-black/60 p-1" onClick={(e) => e.stopPropagation()}>
-        <button type="button" className={zoomBtn} onClick={() => step(-1)} aria-label="Thu nhỏ" title="Thu nhỏ">
+        <button type="button" className={zoomBtn} onClick={() => step(-1)} aria-label={t.zoomOut} title={t.zoomOut}>
           <ZoomOut className="h-4 w-4" />
         </button>
-        <button type="button" className={`${zoomBtn} w-14`} onClick={() => setZoom(zoom === "fit" ? 1 : "fit")} title="Vừa khung / 100%">
-          {zoom === "fit" ? "Vừa" : `${Math.round(zoom * 100)}%`}
+        <button type="button" className={`${zoomBtn} w-14`} onClick={() => setZoom(zoom === "fit" ? 1 : "fit")} title={t.fitToggle}>
+          {zoom === "fit" ? t.fit : `${Math.round(zoom * 100)}%`}
         </button>
-        <button type="button" className={zoomBtn} onClick={() => step(1)} aria-label="Phóng to" title="Phóng to">
+        <button type="button" className={zoomBtn} onClick={() => step(1)} aria-label={t.zoomIn} title={t.zoomIn}>
           <ZoomIn className="h-4 w-4" />
         </button>
       </div>
@@ -234,24 +289,32 @@ function ImageView({ src, name }: { src: string; name: string }) {
   );
 }
 
+class HttpError extends Error {
+  constructor(readonly status: number) {
+    super(`HTTP ${status}`);
+  }
+}
+
+/** HTTP failures keep their status so the message follows the current locale. */
 function useFetched<T>(src: string, read: (r: Response) => Promise<T>) {
-  const [state, setState] = useState<{ data?: T; error?: string }>({});
+  const t = useMessages(M);
+  const [state, setState] = useState<{ data?: T; error?: string; status?: number }>({});
   useEffect(() => {
     let alive = true;
     fetch(src)
       .then(async (r) => {
-        if (!r.ok) throw new Error(`Không tải được tệp (HTTP ${r.status}).`);
+        if (!r.ok) throw new HttpError(r.status);
         return read(r);
       })
       .then((data) => alive && setState({ data }))
-      .catch((e: unknown) => alive && setState({ error: e instanceof Error ? e.message : String(e) }));
+      .catch((e: unknown) => alive && setState(e instanceof HttpError ? { status: e.status } : { error: e instanceof Error ? e.message : String(e) }));
     return () => {
       alive = false;
     };
     // `read` is a stable module-level parser for each caller.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src]);
-  return state;
+  return { data: state.data, error: state.status ? t.httpError(state.status) : state.error };
 }
 
 function TextView({ src }: { src: string }) {
@@ -285,9 +348,10 @@ async function parseWorkbook(r: Response): Promise<Sheet[]> {
 }
 
 function SheetView({ src }: { src: string }) {
+  const t = useMessages(M);
   const { data, error } = useFetched(src, parseWorkbook);
   const [active, setActive] = useState(0);
-  if (error) return <ErrorBox message={`Không đọc được bảng tính: ${error}`} />;
+  if (error) return <ErrorBox message={t.sheetError(error)} />;
   if (!data) return <Loading />;
   const sheet = data[active];
 
@@ -295,7 +359,7 @@ function SheetView({ src }: { src: string }) {
     <div className="flex h-full flex-col overflow-hidden rounded bg-white" onClick={(e) => e.stopPropagation()}>
       <div className="min-h-0 flex-1 overflow-auto">
         {!sheet || sheet.rows.length === 0 ? (
-          <p className="p-4 text-sm text-slate-500">Trang tính trống.</p>
+          <p className="p-4 text-sm text-slate-500">{t.emptySheet}</p>
         ) : (
           <table className="border-separate border-spacing-0 text-xs text-slate-800">
             <thead>
@@ -334,7 +398,7 @@ function SheetView({ src }: { src: string }) {
             {s.name}
           </button>
         ))}
-        {sheet?.truncated && <span className="ml-auto shrink-0 pl-2 text-[11px] text-amber-700">Chỉ hiển thị {MAX_ROWS} dòng × {MAX_COLS} cột đầu – tải xuống để xem đầy đủ.</span>}
+        {sheet?.truncated && <span className="ml-auto shrink-0 pl-2 text-[11px] text-amber-700">{t.truncated(MAX_ROWS, MAX_COLS)}</span>}
       </div>
     </div>
   );

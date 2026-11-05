@@ -4,18 +4,33 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { blankRequest, FourMRequestForm } from "@/components/fourm-request-form";
 import { PageHeader, WireNote } from "@/components/ui";
+import { common, useLocale, useMessages, type Locale } from "@/lib/i18n";
 import { READ_ONLY, submitNew, useMe } from "@/lib/store";
 
+const vi = {
+  title: "Yêu cầu thay đổi 4M",
+  submit: "Gửi yêu cầu",
+};
+const M = {
+  vi,
+  en: {
+    title: "4M change request",
+    submit: "Submit request",
+  },
+} satisfies Record<Locale, typeof vi>;
+
 export function NewRequest() {
+  const t = useMessages(M);
+  const nav = common[useLocale()].nav;
   const router = useRouter();
   const me = useMe();
   if (READ_ONLY) {
     return (
       <>
         <Link href="/4m/cases" className="mb-3 inline-flex text-xs text-slate-500 hover:text-slate-800">
-          ‹ Hồ sơ & việc 4M
+          ‹ {nav.cases4m}
         </Link>
-        <PageHeader title="Yêu cầu thay đổi 4M" description="Before 4M Change · Process4MChange v12" />
+        <PageHeader title={t.title} description="Before 4M Change · Process4MChange v12" />
         <WireNote>Bản xem trước đang đọc dữ liệu iw_prod ở chế độ chỉ đọc nên không tạo hồ sơ mới. Hãy tạo đề nghị 4M trên iWorkflow hiện tại.</WireNote>
       </>
     );
@@ -23,15 +38,15 @@ export function NewRequest() {
   return (
     <>
       <Link href="/4m/cases" className="mb-3 inline-flex text-xs text-slate-500 hover:text-slate-800">
-        ‹ Hồ sơ & việc 4M
+        ‹ {nav.cases4m}
       </Link>
-      <PageHeader title="Yêu cầu thay đổi 4M" description="Before 4M Change · Process4MChange v12 · Man, Machine, Material, Method" />
+      <PageHeader title={t.title} description="Before 4M Change · Process4MChange v12 · Man, Machine, Material, Method" />
       <FourMRequestForm
         key={me.id}
         initial={blankRequest()}
         section={me.section}
         requesterName={me.name}
-        submitLabel="Gửi yêu cầu"
+        submitLabel={t.submit}
         onSubmit={(data, files) => {
           const code = submitNew(data, files);
           router.push(`/4m/cases/${code}`);

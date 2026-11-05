@@ -6,20 +6,8 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { Badge } from "@/components/ui";
-import {
-  caseState,
-  dueStatus,
-  hoursBetween,
-  runProgress,
-  sectionShort,
-  stateTone,
-  type CaseState,
-  type DueStatus,
-  type FourMCase,
-  type OpenTask,
-  type TaskKind,
-} from "@/lib/fourm-case";
-import { common, fmtHours, stepNames, useLocale, type Locale } from "@/lib/i18n";
+import { dueStatus, hoursBetween, stateTone, type CaseState, type DueStatus } from "@/lib/fourm-case";
+import { common, fmtHours, useLocale, type Locale } from "@/lib/i18n";
 
 export const dueColor: Record<DueStatus, string> = { overdue: "#ef4444", dueSoon: "#f59e0b", normal: "#10b981" };
 export const stateColor: Record<CaseState, string> = { running: "#3b82f6", completed: "#10b981", rejected: "#ef4444", cancelled: "#94a3b8" };
@@ -56,26 +44,7 @@ export function Empty({ children }: { children: ReactNode }) {
   return <p className="py-6 text-center text-sm text-slate-400">{children}</p>;
 }
 
-const kindLabel: Record<Locale, Record<TaskKind, string>> = {
-  vi: { main: "", section: "TP thẩm định", staff: "Cán bộ kiểm tra", recheck: "TP duyệt lại" },
-  en: { main: "", section: "Manager review", staff: "Staff check", recheck: "Manager re-check" },
-};
-
-/** "Step · role · section" for an open 4M task. */
-export function taskStepLabel(t: OpenTask, locale: Locale) {
-  return [stepNames[locale][t.step], kindLabel[locale][t.kind], t.section ? sectionShort(t.section) : ""].filter(Boolean).join(" · ");
-}
-
-/** Localized equivalent of currentStepLabel(c). */
-export function caseStepLabel(c: FourMCase, locale: Locale) {
-  if (!c.sim.step) return common[locale].state[caseState(c)];
-  const name = stepNames[locale][c.sim.step];
-  if (c.sim.step === "relsec" || c.sim.step === "rrelsec") {
-    const p = runProgress(c);
-    return `${name} (${p.done}/${p.total})`;
-  }
-  return name;
-}
+export { caseStepLabel, taskStepLabel } from "@/lib/i18n-4m";
 
 export function median(values: number[]) {
   if (!values.length) return 0;

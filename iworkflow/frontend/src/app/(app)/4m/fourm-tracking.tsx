@@ -6,14 +6,13 @@ import { Card, LinkButton, PageHeader, StatCard, WireNote } from "@/components/u
 import { classOptions, sections, stats, type FourMStepId, type SectionRunStatus } from "@/lib/fourm";
 import { caseState, dueStatus, hoursBetween, openTasks, PHASE2_AGES, phase2AgeOf, phase2Days, phase2Status, sectionShort, type FourMCase, type OpenTask } from "@/lib/fourm-case";
 import { common, fmtNum, intlTag, stepNames, useLocale, useMessages, type Locale } from "@/lib/i18n";
+import { phase2AgeLabel, phase2Names, taskStepLabel } from "@/lib/i18n-4m";
 import { personName } from "@/lib/people";
 import { useDb } from "@/lib/store";
-import { CardLink, DueTag, Empty, median, stateColor, stateOrder, taskStepLabel } from "../dashboards/dash-ui";
+import { CardLink, DueTag, Empty, median, stateColor, stateOrder } from "../dashboards/dash-ui";
 
 const vi = {
-  title: "Theo dõi 4M",
   description: "Toàn cảnh quy trình Before 4M Change: hồ sơ đang chạy, điểm nghẽn theo bước và phòng ban, việc quá hạn.",
-  newReq: "Tạo yêu cầu 4M",
   list: "Danh sách hồ sơ",
   kpiRunning: "Hồ sơ đang chạy",
   kpiRunningHint: (b: number, a: number) => `${b} trước thay đổi · ${a} sau thay đổi`,
@@ -51,9 +50,7 @@ const vi = {
   topSections: "Phòng ban nhận nhiều việc thẩm định nhất (hệ cũ)",
   p2Title: "Đã kết thúc giai đoạn 1 nhưng chưa kết thúc giai đoạn 2",
   p2Hint: "Hồ sơ đang chạy đã được các phòng liên quan phê duyệt (xong GĐ1 – Before change) nhưng chưa nhập kết quả hoặc kết quả chưa được phê duyệt xong (GĐ2 – After change). Tuổi tính từ lúc kết thúc GĐ1.",
-  p2Todo: "Chưa thực hiện GĐ2",
   p2TodoHint: "chờ nhập kết quả lần đầu",
-  p2Doing: "Đang thực hiện GĐ2",
   p2DoingHint: "đã nhập kết quả, chưa duyệt xong",
   p2Median: (d: string) => `Trung vị chờ: ${d} ngày`,
   p2ByStep: "Theo bước hiện tại",
@@ -62,16 +59,15 @@ const vi = {
   p2ByAge: "Theo thời gian kể từ khi xong GĐ1",
   p2BySection: "Theo đơn vị đề nghị",
   p2None: "Không có hồ sơ nào đang chờ giai đoạn 2.",
-  p2AgeLabel: (b: (typeof PHASE2_AGES)[number]): string => b.label,
+  /** Legacy step names from stats.stepDurations (lib/fourm.ts), shown as-is in Vietnamese. */
+  legacySteps: {} as Record<string, string>,
   wire: "Phản hồi #5 (tùy chỉnh widget) được xếp vào giai đoạn C: giai đoạn A dùng bố cục cố định, mọi ô số liệu đều bấm được để mở danh sách đã lọc. Phản hồi #7: dashboard và menu đã có tiếng Việt / English (nút VI·EN trên thanh trên cùng).",
 };
 
-const M: Record<Locale, typeof vi> = {
+const M = {
   vi,
   en: {
-    title: "4M tracking",
     description: "Before 4M Change at a glance: running cases, bottlenecks by step and section, overdue work.",
-    newReq: "New 4M request",
     list: "Case list",
     kpiRunning: "Running cases",
     kpiRunningHint: (b, a) => `${b} before change · ${a} after change`,
@@ -109,9 +105,7 @@ const M: Record<Locale, typeof vi> = {
     topSections: "Sections receiving the most review tasks (legacy)",
     p2Title: "Phase 1 finished, phase 2 not finished",
     p2Hint: "Running cases already approved by all related sections (phase 1 – Before change) whose result has not been entered yet or is still being approved (phase 2 – After change). Age counts from the end of phase 1.",
-    p2Todo: "Phase 2 not started",
     p2TodoHint: "waiting for the first result input",
-    p2Doing: "Phase 2 in progress",
     p2DoingHint: "result entered, approval pending",
     p2Median: (d) => `Median wait: ${d} days`,
     p2ByStep: "By current step",
@@ -120,10 +114,22 @@ const M: Record<Locale, typeof vi> = {
     p2ByAge: "By time since phase 1 ended",
     p2BySection: "By requesting section",
     p2None: "No cases waiting in phase 2.",
-    p2AgeLabel: (b) => b.labelEn,
+    legacySteps: {
+      "Tạo yêu cầu (đến khi gửi)": "Create request (until submitted)",
+      "Trưởng phòng đề nghị kiểm tra": "Requesting manager check",
+      "GM đơn vị đề nghị phê duyệt": "Requesting unit GM approval",
+      "Phòng liên quan thẩm định (TP)": "Related section review (manager)",
+      "Cán bộ phòng liên quan kiểm tra": "Related section staff check",
+      "TP phòng liên quan duyệt lại sau cán bộ": "Related section manager re-check after staff",
+      "Nhập kết quả thay đổi 4M": "Input 4M change result",
+      "Trưởng phòng kiểm tra kết quả": "Manager check result",
+      "GM phê duyệt kết quả": "GM approve result",
+      "Phòng liên quan xác nhận kết quả": "Related sections confirm result",
+      "Người đề nghị xác nhận hoàn thành": "Requester confirms completion",
+    },
     wire: "Feedback #5 (customisable widgets) is scheduled for phase C: phase A uses a fixed layout where every figure drills down to a filtered list. Feedback #7: dashboards and navigation now support Tiếng Việt / English (VI·EN switch in the top bar).",
   },
-};
+} satisfies Record<Locale, typeof vi>;
 
 const ORDER: FourMStepId[] = ["create", "mgr", "gm", "relsec", "gd", "result", "rmgr", "rgm", "rrelsec", "rgd", "review"];
 const HEAT: (SectionRunStatus | "overdue" | "total")[] = ["pending", "staff", "recheck", "approved", "overdue", "total"];
@@ -140,6 +146,7 @@ export function FourMTracking() {
   const locale = useLocale();
   const t = useMessages(M);
   const c0 = common[locale];
+  const p2n = phase2Names[locale];
   const { cases, now } = useDb();
   const tag = intlTag(locale);
 
@@ -212,13 +219,13 @@ export function FourMTracking() {
   return (
     <>
       <PageHeader
-        title={t.title}
+        title={c0.nav.track4m}
         description={t.description}
         actions={
           <>
             <LinkButton href="/4m/cases?view=all">{t.list}</LinkButton>
             <LinkButton href="/4m/new" variant="primary">
-              {t.newReq}
+              {c0.nav.new4m}
             </LinkButton>
           </>
         }
@@ -255,8 +262,8 @@ export function FourMTracking() {
               <div>
                 <div className="mb-3 grid grid-cols-2 gap-2">
                   {[
-                    { k: "todo", label: t.p2Todo, hint: t.p2TodoHint, list: p2Todo, cls: "border-amber-200 bg-amber-50 text-amber-900" },
-                    { k: "doing", label: t.p2Doing, hint: t.p2DoingHint, list: p2Doing, cls: "border-blue-200 bg-blue-50 text-blue-900" },
+                    { k: "todo", label: p2n.todo, hint: t.p2TodoHint, list: p2Todo, cls: "border-amber-200 bg-amber-50 text-amber-900" },
+                    { k: "doing", label: p2n.doing, hint: t.p2DoingHint, list: p2Doing, cls: "border-blue-200 bg-blue-50 text-blue-900" },
                   ].map((x) => (
                     <Link key={x.k} href={`/4m/cases?view=all&p2=${x.k}`} className={`rounded-lg border px-3 py-2 hover:ring-2 hover:ring-blue-300 ${x.cls}`}>
                       <div className="text-[11px] font-medium">{x.label}</div>
@@ -275,11 +282,11 @@ export function FourMTracking() {
                   <span className="flex gap-3 font-normal">
                     <span className="flex items-center gap-1">
                       <span className="h-2 w-2 rounded-sm bg-amber-500" />
-                      {t.p2Todo}
+                      {p2n.todo}
                     </span>
                     <span className="flex items-center gap-1">
                       <span className="h-2 w-2 rounded-sm bg-blue-500" />
-                      {t.p2Doing}
+                      {p2n.doing}
                     </span>
                   </span>
                 </div>
@@ -287,14 +294,14 @@ export function FourMTracking() {
                   {p2Ages.map(({ b, todo, doing }) => (
                     <div key={b.id} className="flex items-center gap-2 text-xs">
                       <Link href={`/4m/cases?view=all&p2=all&p2age=${b.id}`} className="w-24 shrink-0 text-slate-600 hover:text-blue-700">
-                        {t.p2AgeLabel(b)}
+                        {phase2AgeLabel(b.id, locale)}
                       </Link>
                       <div className="flex h-4 flex-1 overflow-hidden rounded bg-slate-100">
                         {todo > 0 && (
-                          <Link href={`/4m/cases?view=all&p2=todo&p2age=${b.id}`} title={`${t.p2Todo}: ${todo}`} className="block h-full bg-amber-500 hover:opacity-80" style={{ width: `${(todo / p2AgeMax) * 100}%` }} />
+                          <Link href={`/4m/cases?view=all&p2=todo&p2age=${b.id}`} title={`${p2n.todo}: ${todo}`} className="block h-full bg-amber-500 hover:opacity-80" style={{ width: `${(todo / p2AgeMax) * 100}%` }} />
                         )}
                         {doing > 0 && (
-                          <Link href={`/4m/cases?view=all&p2=doing&p2age=${b.id}`} title={`${t.p2Doing}: ${doing}`} className="block h-full bg-blue-500 hover:opacity-80" style={{ width: `${(doing / p2AgeMax) * 100}%` }} />
+                          <Link href={`/4m/cases?view=all&p2=doing&p2age=${b.id}`} title={`${p2n.doing}: ${doing}`} className="block h-full bg-blue-500 hover:opacity-80" style={{ width: `${(doing / p2AgeMax) * 100}%` }} />
                         )}
                       </div>
                       <span className="w-20 shrink-0 whitespace-nowrap text-right tabular-nums text-slate-700">
@@ -409,7 +416,7 @@ export function FourMTracking() {
               <tbody className="divide-y divide-slate-100">
                 {stats.stepDurations.map((d) => (
                   <tr key={d.step}>
-                    <td className="py-1.5 pr-2 text-slate-700">{d.step}</td>
+                    <td className="py-1.5 pr-2 text-slate-700">{t.legacySteps[d.step] ?? d.step}</td>
                     <td className="py-1.5 pr-2 text-right tabular-nums text-slate-600">{fmtNum(d.done, locale)}</td>
                     <td className="py-1.5 pr-2 text-right tabular-nums text-slate-800">{hfmt(d.medianH, locale)}</td>
                     <td className={`py-1.5 pr-2 text-right tabular-nums ${d.p90H > 24 * 14 ? "font-semibold text-red-600" : "text-slate-600"}`}>{hfmt(d.p90H, locale)}</td>

@@ -115,7 +115,7 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
-      <p className="border-t border-slate-200 px-4 py-3 text-[11px] text-slate-400">{READ_ONLY ? "Xem trước · dữ liệu iw_prod (chỉ đọc)" : t.footer}</p>
+      <p className="border-t border-slate-200 px-4 py-3 text-[11px] text-slate-400">{READ_ONLY ? t.footerProd : t.footer}</p>
     </aside>
   );
 }

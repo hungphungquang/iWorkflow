@@ -1,5 +1,6 @@
 // Minimal i18n: locale persisted per browser, dictionaries co-located with the screens that use them.
-// Phase A translates navigation and dashboards only (decision 05/2026); forms and case data stay Vietnamese.
+// Navigation, dashboards and the 4M screens are translated (4M labels shared in ./i18n-4m.ts);
+// case data (titles, opinions, history, section names) and wireframe notes stay as entered.
 
 import type { FourMStepId } from "./fourm";
 import type { CaseState, DueStatus } from "./fourm-case";
@@ -60,6 +61,7 @@ export const common = {
       admin: "Quản trị",
       migration: "Chuyển đổi hệ cũ",
       footer: "Wireframe · dữ liệu mẫu",
+      footerProd: "Xem trước · dữ liệu iw_prod (chỉ đọc)",
     },
     top: {
       search: "Tìm trong toàn bộ nội dung hồ sơ…  (Ctrl + K)",
@@ -102,6 +104,7 @@ export const common = {
       admin: "Administration",
       migration: "Legacy migration",
       footer: "Wireframe · sample data",
+      footerProd: "Preview · iw_prod data (read-only)",
     },
     top: {
       search: "Search all case content…  (Ctrl + K)",

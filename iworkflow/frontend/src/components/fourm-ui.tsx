@@ -3,28 +3,43 @@
 import { Check, CircleDot, X } from "lucide-react";
 import { Badge } from "@/components/ui";
 import { stepById, type FourMStepId } from "@/lib/fourm";
-import { caseState, dueStatus, hoursBetween, stateLabel, stateTone, stepShort, type DueStatus, type FourMCase, type SearchHit } from "@/lib/fourm-case";
-import { fmtHours, useLocale } from "@/lib/i18n";
+import { caseState, dueStatus, hoursBetween, stateTone, type DueStatus, type FourMCase, type SearchHit } from "@/lib/fourm-case";
+import { common, fmtHours, stepNames, useLocale, type Locale } from "@/lib/i18n";
+import { hitFieldName, phaseNames } from "@/lib/i18n-4m";
 import { initials, personName } from "@/lib/people";
 
+export function CaseLoading() {
+  const locale = useLocale();
+  return <p className="text-sm text-slate-500">{locale === "vi" ? "Đang tải hồ sơ…" : "Loading case…"}</p>;
+}
+
 export function CaseStateBadge({ c }: { c: FourMCase }) {
+  const locale = useLocale();
   const s = caseState(c);
-  return <Badge tone={stateTone[s]}>{stateLabel[s]}</Badge>;
+  return <Badge tone={stateTone[s]}>{common[locale].state[s]}</Badge>;
 }
 
 const dueTone: Record<DueStatus, "red" | "amber" | "green"> = { overdue: "red", dueSoon: "amber", normal: "green" };
+const leftText: Record<Locale, (h: string) => string> = { vi: (h) => `Còn ${h}`, en: (h) => `${h} left` };
 
 export function DueBadge({ due, now, showLeft = true }: { due: string; now: string; showLeft?: boolean }) {
   const locale = useLocale();
+  const names = common[locale].due;
   const st = dueStatus(due, now);
-  const left = hoursBetween(now, due);
-  const text = st === "overdue" ? `Quá hạn ${fmtHours(left, locale)}` : st === "dueSoon" ? `Còn ${fmtHours(left, locale)}` : "Trong hạn";
-  return <Badge tone={dueTone[st]}>{showLeft ? text : st === "overdue" ? "Quá hạn" : st === "dueSoon" ? "Sắp đến hạn" : "Trong hạn"}</Badge>;
+  const left = fmtHours(hoursBetween(now, due), locale);
+  const text = st === "overdue" ? `${names.overdue} ${left}` : st === "dueSoon" ? leftText[locale](left) : names.normal;
+  return <Badge tone={dueTone[st]}>{showLeft ? text : names[st]}</Badge>;
 }
 
+const versionHint: Record<Locale, (v: number) => string> = {
+  vi: (v) => `Phiên bản định nghĩa quy trình v${v} – vẫn gộp chung theo tên quy trình`,
+  en: (v) => `Process definition version v${v} – still grouped under the process name`,
+};
+
 export function VersionTag({ v }: { v: number }) {
+  const locale = useLocale();
   return (
-    <span className="rounded border border-slate-200 px-1 text-[10px] text-slate-500" title={`Phiên bản định nghĩa quy trình v${v} – vẫn gộp chung theo tên quy trình`}>
+    <span className="rounded border border-slate-200 px-1 text-[10px] text-slate-500" title={versionHint[locale](v)}>
       v{v}
     </span>
   );
@@ -43,9 +58,10 @@ export function Avatar({ id, size = "sm" }: { id: string; size?: "sm" | "md" }) 
 }
 
 export function Highlight({ hit }: { hit: SearchHit }) {
+  const locale = useLocale();
   return (
     <span className="block truncate text-xs text-slate-500">
-      <span className="font-medium text-slate-600">{hit.field}: </span>
+      <span className="font-medium text-slate-600">{hitFieldName(hit.field, locale)}: </span>
       {hit.parts.map((p, i) =>
         p.hit ? (
           <mark key={i} className="rounded bg-yellow-200 px-0.5 text-slate-900">
@@ -82,14 +98,16 @@ export function stepStates(c: FourMCase): { id: FourMStepId; state: StepState }[
 }
 
 export function Stepper({ c, compact = false }: { c: FourMCase; compact?: boolean }) {
+  const locale = useLocale();
+  const names = stepNames[locale];
   const states = stepStates(c);
   if (compact) {
     return (
-      <span className="flex items-center gap-0.5" aria-label="Tiến độ">
+      <span className="flex items-center gap-0.5" aria-label={locale === "vi" ? "Tiến độ" : "Progress"}>
         {states.map(({ id, state }) => (
           <span
             key={id}
-            title={stepShort[id]}
+            title={names[id]}
             className={`h-1.5 w-3 rounded-full ${
               state === "done" ? "bg-emerald-500" : state === "current" ? "bg-blue-600" : state === "stopped" ? "bg-red-500" : "bg-slate-200"
             } ${stepById(id).phase === "after" && id === "result" ? "ml-1" : ""}`}
@@ -99,8 +117,8 @@ export function Stepper({ c, compact = false }: { c: FourMCase; compact?: boolea
     );
   }
   const phases = [
-    { title: "Giai đoạn 1 · Trước thay đổi", items: states.filter((s) => stepById(s.id).phase === "before") },
-    { title: "Giai đoạn 2 · Sau thay đổi", items: states.filter((s) => stepById(s.id).phase === "after") },
+    { title: phaseNames[locale].before, items: states.filter((s) => stepById(s.id).phase === "before") },
+    { title: phaseNames[locale].after, items: states.filter((s) => stepById(s.id).phase === "after") },
   ];
   return (
     <div className="grid gap-4 lg:grid-cols-2">
@@ -127,7 +145,7 @@ export function Stepper({ c, compact = false }: { c: FourMCase; compact?: boolea
                   </span>
                   <span className={`h-0.5 flex-1 ${i === p.items.length - 1 ? "bg-transparent" : p.items[i + 1].state === "upcoming" ? "bg-slate-200" : "bg-emerald-400"}`} />
                 </div>
-                <span className={`mt-1.5 px-1 text-[11px] leading-tight ${state === "current" ? "font-semibold text-blue-700" : state === "upcoming" ? "text-slate-400" : "text-slate-600"}`}>{stepShort[id]}</span>
+                <span className={`mt-1.5 px-1 text-[11px] leading-tight ${state === "current" ? "font-semibold text-blue-700" : state === "upcoming" ? "text-slate-400" : "text-slate-600"}`}>{names[id]}</span>
               </li>
             ))}
           </ol>

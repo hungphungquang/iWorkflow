@@ -1,9 +1,10 @@
 import { Suspense } from "react";
+import { CaseLoading } from "@/components/fourm-ui";
 import { CaseDetail } from "./case-detail";
 
 export default function FourMCasePage({ params }: { params: Promise<{ code: string }> }) {
   return (
-    <Suspense fallback={<p className="text-sm text-slate-500">Đang tải hồ sơ…</p>}>
+    <Suspense fallback={<CaseLoading />}>
       <CaseDetail params={params} />
     </Suspense>
   );
