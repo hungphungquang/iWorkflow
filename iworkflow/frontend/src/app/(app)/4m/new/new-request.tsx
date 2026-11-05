@@ -4,11 +4,22 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { blankRequest, FourMRequestForm } from "@/components/fourm-request-form";
 import { PageHeader, WireNote } from "@/components/ui";
-import { submitNew, useMe } from "@/lib/store";
+import { READ_ONLY, submitNew, useMe } from "@/lib/store";
 
 export function NewRequest() {
   const router = useRouter();
   const me = useMe();
+  if (READ_ONLY) {
+    return (
+      <>
+        <Link href="/4m/cases" className="mb-3 inline-flex text-xs text-slate-500 hover:text-slate-800">
+          ‹ Hồ sơ & việc 4M
+        </Link>
+        <PageHeader title="Yêu cầu thay đổi 4M" description="Before 4M Change · Process4MChange v12" />
+        <WireNote>Bản xem trước đang đọc dữ liệu iw_prod ở chế độ chỉ đọc nên không tạo hồ sơ mới. Hãy tạo đề nghị 4M trên iWorkflow hiện tại.</WireNote>
+      </>
+    );
+  }
   return (
     <>
       <Link href="/4m/cases" className="mb-3 inline-flex text-xs text-slate-500 hover:text-slate-800">

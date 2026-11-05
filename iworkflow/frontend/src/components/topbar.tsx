@@ -6,16 +6,17 @@ import { useRouter } from "next/navigation";
 import { Bell, Check, ChevronDown, Clock, RotateCcw, Search } from "lucide-react";
 import { openTasks } from "@/lib/fourm-case";
 import { common, fmtDateTime, locales, setLocale, useLocale, useMessages } from "@/lib/i18n";
-import { initials, people, personById } from "@/lib/people";
-import { advanceClock, markRead, resetDemo, switchUser, useDb } from "@/lib/store";
+import { initials, people } from "@/lib/people";
+import { advanceClock, markRead, READ_ONLY, resetDemo, switchUser, useDb, useMe } from "@/lib/store";
 
 export function Topbar() {
   const router = useRouter();
   const locale = useLocale();
   const t = useMessages(common).top;
   const db = useDb();
-  const me = personById(db.me)!;
+  const me = useMe();
   const [q, setQ] = useState("");
+  const [who, setWho] = useState("");
   const [menu, setMenu] = useState<"notes" | "user" | null>(null);
   const input = useRef<HTMLInputElement>(null);
 
@@ -36,7 +37,11 @@ export function Topbar() {
 
   const myNotes = db.notes.filter((n) => n.to === db.me);
   const unread = myNotes.filter((n) => !n.read);
-  const taskCount = (id: string) => db.cases.flatMap(openTasks).filter((x) => x.assignee === id).length;
+  const taskCounts = new Map<string, number>();
+  if (menu === "user") for (const x of db.cases.flatMap(openTasks)) taskCounts.set(x.assignee, (taskCounts.get(x.assignee) ?? 0) + 1);
+  const taskCount = (id: string) => taskCounts.get(id) ?? 0;
+  const whoQ = who.trim().toLowerCase();
+  const candidates = whoQ ? people.filter((p) => `${p.id} ${p.name} ${p.section} ${p.title}`.toLowerCase().includes(whoQ)) : people;
 
   return (
     <header className="relative z-20 flex h-14 shrink-0 items-center gap-3 border-b border-slate-200 bg-white px-4 md:px-6">
@@ -128,8 +133,20 @@ export function Topbar() {
           {menu === "user" && (
             <Popover onClose={() => setMenu(null)} className="w-80">
               <p className="border-b border-slate-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{t.actAs}</p>
+              {people.length > 12 && (
+                <div className="border-b border-slate-100 px-3 py-2">
+                  <input
+                    autoFocus
+                    value={who}
+                    onChange={(e) => setWho(e.target.value)}
+                    placeholder="Tìm theo tên, tài khoản, mã phòng…"
+                    aria-label="Tìm người dùng"
+                    className="w-full rounded border border-slate-200 px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              )}
               <ul className="max-h-80 overflow-y-auto py-1">
-                {people.map((p) => {
+                {candidates.slice(0, 200).map((p) => {
                   const n = taskCount(p.id);
                   return (
                     <li key={p.id}>
@@ -153,18 +170,34 @@ export function Topbar() {
                   );
                 })}
               </ul>
-              <div className="flex items-center gap-2 border-t border-slate-100 px-3 py-2 text-xs text-slate-600">
-                <Clock className="h-3.5 w-3.5" />
-                <span className="flex-1">
-                  {t.clock}: <b>{fmtDateTime(db.now, locale)}</b>
-                </span>
-                <button className="rounded border border-slate-300 px-1.5 py-0.5 hover:bg-slate-50" onClick={() => advanceClock(24)}>
-                  {t.plus1d}
-                </button>
-              </div>
-              <button className="flex w-full items-center gap-2 border-t border-slate-100 px-3 py-2 text-left text-xs text-red-600 hover:bg-red-50" onClick={() => resetDemo()}>
-                <RotateCcw className="h-3.5 w-3.5" /> {t.reset}
-              </button>
+              {READ_ONLY ? (
+                <>
+                  <div className="flex items-center gap-2 border-t border-slate-100 px-3 py-2 text-xs text-slate-600">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span className="flex-1">
+                      Dữ liệu iw_prod lúc <b>{fmtDateTime(db.now, locale)}</b>
+                    </span>
+                  </div>
+                  <button className="flex w-full items-center gap-2 border-t border-slate-100 px-3 py-2 text-left text-xs text-blue-700 hover:bg-blue-50" onClick={() => resetDemo()}>
+                    <RotateCcw className="h-3.5 w-3.5" /> Tải lại từ iw_prod
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 border-t border-slate-100 px-3 py-2 text-xs text-slate-600">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span className="flex-1">
+                      {t.clock}: <b>{fmtDateTime(db.now, locale)}</b>
+                    </span>
+                    <button className="rounded border border-slate-300 px-1.5 py-0.5 hover:bg-slate-50" onClick={() => advanceClock(24)}>
+                      {t.plus1d}
+                    </button>
+                  </div>
+                  <button className="flex w-full items-center gap-2 border-t border-slate-100 px-3 py-2 text-left text-xs text-red-600 hover:bg-red-50" onClick={() => resetDemo()}>
+                    <RotateCcw className="h-3.5 w-3.5" /> {t.reset}
+                  </button>
+                </>
+              )}
             </Popover>
           )}
         </div>

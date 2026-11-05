@@ -59,6 +59,9 @@ export type FourMCase = RequestData & {
   comments: Comment[];
   shares: Share[];
   watchers: string[];
+  /** iw_prod read-only mode: Activiti process instance id and the real open tasks (assignees from ACT_HI_TASKINST). */
+  prodId?: string;
+  prodTasks?: OpenTask[];
 };
 
 export type CaseState = "running" | EndState;
@@ -161,6 +164,7 @@ export type OpenTask = { id: string; code: string; step: FourMStepId; kind: Task
 export const taskKindLabel: Record<TaskKind, string> = { main: "", section: "Trưởng phòng thẩm định", staff: "Cán bộ kiểm tra", recheck: "TP duyệt lại sau cán bộ" };
 
 export function openTasks(c: FourMCase): OpenTask[] {
+  if (c.prodTasks) return c.prodTasks;
   const step = c.sim.step;
   if (!step) return [];
   const mk = (kind: TaskKind, assignee: string, since: string, days: number, section?: string): OpenTask => ({

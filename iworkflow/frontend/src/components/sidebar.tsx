@@ -22,7 +22,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { openTasks } from "@/lib/fourm-case";
 import { common, useMessages } from "@/lib/i18n";
-import { useDb } from "@/lib/store";
+import { READ_ONLY, useDb } from "@/lib/store";
 
 type Item = { href: string; label: string; icon: LucideIcon; badge?: number };
 
@@ -115,7 +115,7 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
-      <p className="border-t border-slate-200 px-4 py-3 text-[11px] text-slate-400">{t.footer}</p>
+      <p className="border-t border-slate-200 px-4 py-3 text-[11px] text-slate-400">{READ_ONLY ? "Xem trước · dữ liệu iw_prod (chỉ đọc)" : t.footer}</p>
     </aside>
   );
 }

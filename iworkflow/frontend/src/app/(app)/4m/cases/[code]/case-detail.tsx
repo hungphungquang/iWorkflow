@@ -25,7 +25,7 @@ import {
 } from "@/lib/fourm-case";
 import { fmtDate, fmtDateTime } from "@/lib/i18n";
 import { isEhs, managerOf, people, personName, staffOf } from "@/lib/people";
-import { act, useDb } from "@/lib/store";
+import { act, READ_ONLY, useDb } from "@/lib/store";
 
 const REQUIRE_COMMENT = new Set(["P4M_Button_YCCS", "P4M_Button_TC", "Button_4M_TPXL_YCCS", "Button_4M_TPXL_TC", "Button_4M_KT"]);
 const RETURN_CODES = new Set(["P4M_Button_YCCS", "Button_4M_TPXL_YCCS"]);
@@ -92,12 +92,16 @@ export function CaseDetail({ params }: { params: Promise<{ code: string }> }) {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button type="button" className={buttonClass()} onClick={() => act(c.code, { type: "watch", on: !watching })}>
-            {watching ? <BellOff className="h-4 w-4" /> : <Bell className="h-4 w-4" />} {watching ? "Bỏ theo dõi" : "Theo dõi"}
-          </button>
-          <button type="button" className={buttonClass()} onClick={() => setSharing(true)}>
-            <Share2 className="h-4 w-4" /> Chia sẻ
-          </button>
+          {!READ_ONLY && (
+            <>
+              <button type="button" className={buttonClass()} onClick={() => act(c.code, { type: "watch", on: !watching })}>
+                {watching ? <BellOff className="h-4 w-4" /> : <Bell className="h-4 w-4" />} {watching ? "Bỏ theo dõi" : "Theo dõi"}
+              </button>
+              <button type="button" className={buttonClass()} onClick={() => setSharing(true)}>
+                <Share2 className="h-4 w-4" /> Chia sẻ
+              </button>
+            </>
+          )}
           <button
             type="button"
             className={buttonClass("ghost")}
@@ -124,9 +128,22 @@ export function CaseDetail({ params }: { params: Promise<{ code: string }> }) {
 
       <div className="grid gap-4 xl:grid-cols-[1fr_24rem]">
         <div className="min-w-0 space-y-4">
-          {mine.map((t) => (
-            <TaskPanel key={t.id} c={c} t={t} now={db.now} onDone={done} />
-          ))}
+          {READ_ONLY && mine.length > 0 && (
+            <section className="rounded-lg border-2 border-blue-300 bg-blue-50/40 p-4 text-sm text-blue-900">
+              <h2 className="font-semibold">Bạn có {mine.length} việc trong hồ sơ này</h2>
+              <ul className="mt-1 list-disc pl-5 text-xs">
+                {mine.map((t) => (
+                  <li key={t.id}>
+                    {stepShort[t.step]}
+                    {t.section ? ` – ${sectionShort(t.section)}` : ""}
+                    {taskKindLabel[t.kind] ? ` (${taskKindLabel[t.kind]})` : ""} · hạn {dt(t.due)}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-xs text-slate-600">Bản xem trước đang đọc dữ liệu iw_prod ở chế độ chỉ đọc – hãy xử lý việc này trên iWorkflow hiện tại.</p>
+            </section>
+          )}
+          {!READ_ONLY && mine.map((t) => <TaskPanel key={t.id} c={c} t={t} now={db.now} onDone={done} />)}
 
           <Card title="Tiến độ">
             <Stepper c={c} />
@@ -134,7 +151,7 @@ export function CaseDetail({ params }: { params: Promise<{ code: string }> }) {
 
           <RequestInfo c={c} />
           <RelatedTable c={c} />
-          <EhsBlock c={c} editable={isEhs(me) && mine.length > 0} onDone={done} />
+          <EhsBlock c={c} editable={!READ_ONLY && isEhs(me) && mine.length > 0} onDone={done} />
           {c.sim.visited.includes("result") && <ResultBlock c={c} />}
         </div>
 
@@ -161,7 +178,7 @@ export function CaseDetail({ params }: { params: Promise<{ code: string }> }) {
                     </li>
                   ))}
                 </ul>
-                {others.length > 0 && <RemindBox c={c} onDone={done} />}
+                {others.length > 0 && !READ_ONLY && <RemindBox c={c} onDone={done} />}
               </>
             ) : (
               <div className="text-sm text-slate-600">
@@ -832,6 +849,7 @@ function Talk({ c, onDone }: { c: FourMCase; onDone: (m: string) => void }) {
           </div>
         </div>
       ))}
+      {!READ_ONLY && (
       <div className="space-y-2 border-t border-slate-100 pt-3">
         <textarea rows={3} value={text} onChange={(e) => setText(e.target.value)} className={inputClass} placeholder="Viết trao đổi… dùng @Tên để nhắc" aria-label="Nội dung trao đổi" />
         <div className="flex items-center gap-2">
@@ -862,6 +880,7 @@ function Talk({ c, onDone }: { c: FourMCase; onDone: (m: string) => void }) {
           </button>
         </div>
       </div>
+      )}
     </div>
   );
 }
@@ -882,6 +901,7 @@ function Files({ c, onDone }: { c: FourMCase; onDone: (m: string) => void }) {
           </li>
         ))}
       </ul>
+      {!READ_ONLY && (
       <label className={`${buttonClass("ghost")} cursor-pointer`}>
         <Paperclip className="h-4 w-4" /> Thêm tệp
         <input
@@ -896,6 +916,7 @@ function Files({ c, onDone }: { c: FourMCase; onDone: (m: string) => void }) {
           }}
         />
       </label>
+      )}
     </div>
   );
 }
@@ -925,9 +946,11 @@ function Shares({ c, onShare }: { c: FourMCase; onShare: () => void }) {
           {s.note && <p className="mt-1 text-slate-600">“{s.note}”</p>}
         </div>
       ))}
-      <button type="button" className={buttonClass()} onClick={onShare}>
-        <Share2 className="h-4 w-4" /> Chia sẻ thêm
-      </button>
+      {!READ_ONLY && (
+        <button type="button" className={buttonClass()} onClick={onShare}>
+          <Share2 className="h-4 w-4" /> Chia sẻ thêm
+        </button>
+      )}
     </div>
   );
 }

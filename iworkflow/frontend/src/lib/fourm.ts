@@ -71,6 +71,8 @@ export const sections: Section[] = [
   { code: "1511", name: "IT", manager: "Trưởng nhóm IT", gm: "Plant Manager / IT Dept" },
 ];
 export const sectionByCode = (code: string) => sections.find((s) => s.code === code)!;
+/** iw_prod read-only mode: replace the section catalogue in place with HT_DONVI. */
+export const replaceSections = (next: Section[]) => void sections.splice(0, sections.length, ...next);
 
 export const classOptions = [
   { code: "Q", label: "Q – Quality" },

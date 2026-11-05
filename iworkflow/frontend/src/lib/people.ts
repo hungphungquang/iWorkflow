@@ -53,6 +53,13 @@ export const org: Record<string, { manager: string; gm: string; staff: string[] 
 export const GD_ID = "gd";
 export const EHS_GROUP = "322A";
 
+/** iw_prod read-only mode: swap the fictional directory for the real one in place (helpers read the live arrays). */
+export function replaceDirectory(nextPeople: Person[], nextOrg: typeof org) {
+  people.splice(0, people.length, ...nextPeople);
+  for (const k of Object.keys(org)) delete org[k];
+  Object.assign(org, nextOrg);
+}
+
 export const personById = (id: string) => people.find((p) => p.id === id);
 export const personName = (id: string) => personById(id)?.name ?? id;
 export const managerOf = (section: string) => org[section]?.manager ?? "";
