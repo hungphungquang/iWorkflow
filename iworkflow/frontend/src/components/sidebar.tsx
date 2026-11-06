@@ -14,9 +14,11 @@ import {
   Inbox,
   LayoutTemplate,
   ListChecks,
+  PackageCheck,
   PlusCircle,
   Search,
   Settings,
+  Shirt,
   Users,
   Workflow,
 } from "lucide-react";
@@ -28,7 +30,7 @@ import { READ_ONLY, useDb } from "@/lib/store";
 type Item = { href: string; label: string; icon: LucideIcon; badge?: number };
 
 function isActive(pathname: string, href: string) {
-  if (href === "/" || href === "/cases" || href === "/4m" || href === "/working-standard") return pathname === href;
+  if (href === "/" || href === "/cases" || href === "/4m" || href === "/working-standard" || href === "/operational-request" || href === "/uniform-request") return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -47,6 +49,8 @@ export function Sidebar() {
         { href: "/dashboards/company", label: t.company, icon: Building2 },
         { href: "/4m", label: t.track4m, icon: Gauge },
         { href: "/working-standard/dashboard", label: "Working Standard", icon: ClipboardCheck },
+        { href: "/operational-request/dashboard", label: "Operational Request", icon: PackageCheck },
+        { href: "/uniform-request/dashboard", label: "Company Uniform", icon: Shirt },
       ],
     },
     {
@@ -62,6 +66,8 @@ export function Sidebar() {
       items: [
         { href: "/tasks", label: t.tasks, icon: Inbox },
         { href: "/working-standard", label: "Working Standard", icon: ClipboardCheck },
+        { href: "/operational-request", label: "Operational Request", icon: PackageCheck },
+        { href: "/uniform-request", label: "Company Uniform", icon: Shirt },
         { href: "/cases/new", label: t.newCase, icon: PlusCircle },
         { href: "/cases", label: t.cases, icon: FolderSearch },
         { href: "/reports", label: t.reports, icon: BarChart3 },

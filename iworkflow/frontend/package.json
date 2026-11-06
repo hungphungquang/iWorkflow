@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "test:working-standard": "node --test tests/working-standard.test.mjs",
+    "test:operational-request": "node --test tests/operational-request.test.mjs",
+    "test:uniform-request": "node --test tests/uniform-request.test.mjs",
     "lint": "eslint"
   },
   "dependencies": {

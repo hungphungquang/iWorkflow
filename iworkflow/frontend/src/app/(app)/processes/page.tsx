@@ -29,6 +29,14 @@ export default function ProcessesPage() {
                     <Link href="/working-standard" className="block text-sm font-medium text-blue-700 hover:underline">
                       {p.name}
                     </Link>
+                  ) : p.key === "Operational_Request_Form" ? (
+                    <Link href="/operational-request" className="block text-sm font-medium text-blue-700 hover:underline">
+                      {p.name}
+                    </Link>
+                  ) : p.key === "Uniform_Request" ? (
+                    <Link href="/uniform-request" className="block text-sm font-medium text-blue-700 hover:underline">
+                      {p.name}
+                    </Link>
                   ) : p.key === "Process4MChange" ? (
                     <Link href="/processes/4m" className="block truncate text-sm font-medium text-blue-700 hover:underline">
                       {p.name} → phân tích

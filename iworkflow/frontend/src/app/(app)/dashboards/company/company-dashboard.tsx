@@ -109,7 +109,7 @@ export function CompanyDashboard() {
   const top = [...processes]
     .sort((a, b) => b.started12m - a.started12m)
     .slice(0, 10)
-    .map((p) => ({ label: p.name, value: p.started12m, href: p.key === PROCESS_KEY ? "/4m" : p.key === "RelSecWS" ? "/working-standard/dashboard" : undefined, tone: p.key === PROCESS_KEY ? ("violet" as const) : ("blue" as const) }));
+    .map((p) => ({ label: p.name, value: p.started12m, href: p.key === PROCESS_KEY ? "/4m" : p.key === "RelSecWS" ? "/working-standard/dashboard" : p.key === "Operational_Request_Form" ? "/operational-request/dashboard" : p.key === "Uniform_Request" ? "/uniform-request/dashboard" : undefined, tone: p.key === PROCESS_KEY ? ("violet" as const) : ("blue" as const) }));
 
   const byStep = stepOrder
     .map((step) => {

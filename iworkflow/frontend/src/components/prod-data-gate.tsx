@@ -30,7 +30,8 @@ const M = {
 
 /** In iw_prod read-only mode: loads the snapshot once and holds the page until the real data is in. */
 export function ProdDataGate({ children }: { children: React.ReactNode }) {
-  const isWorkingStandard = usePathname().startsWith("/working-standard");
+  const pathname = usePathname();
+  const loadsOwnData = pathname.startsWith("/working-standard") || pathname.startsWith("/operational-request") || pathname.startsWith("/uniform-request");
   const status = useProdStatus();
   const locale = useLocale();
   const t = useMessages(M);
@@ -39,7 +40,7 @@ export function ProdDataGate({ children }: { children: React.ReactNode }) {
     void loadProdSnapshot();
   }, []);
 
-  if (!READ_ONLY || isWorkingStandard) return <>{children}</>;
+  if (!READ_ONLY || loadsOwnData) return <>{children}</>;
 
   const banner = (
     <div className="mb-4 flex flex-wrap items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs text-amber-900" role="status">

@@ -20,6 +20,32 @@ The dashboard supports rolling 3/6/12-month cohorts based on actual parent creat
 
 Run the focused checks with `npm run test:working-standard`, then `npm run lint` and `npm run build`.
 
+## Operational Request Form
+
+`Operational_Request_Form` is the busiest workflow: about 1,050 requests started per year, and more than 3,000 are still open. It moves goods (finished tires) between the requesting section, 3312-PIC and the Yusen finished-goods warehouse. The workspace at `/operational-request` and the dashboard at `/operational-request/dashboard` follow the same VI/EN switch, source toggle and read-only production rules as Working Standard. Shared labels are in `src/lib/i18n-operational-request.ts`.
+
+Each request goes through 8 BPMN steps: PIC request → request approval → 3312-PIC receipt → Yusen WH receipt (warehouse confirmation required) → PIC result (total/OK/NG, NG handling) → result approval → 3312-PIC confirmation → Yusen WH confirmation. Approvers can approve, request a revision (back to the request or result step) or reject (the reject service task). Revise and reject need a comment. A request is `Cancelled` when the process ended with a delete reason, and `Rejected` when it passed through the reject service task.
+
+- The snapshot covers requests started in the last 12 months plus all older unfinished ones (1 read-only transaction). The section comes from the request code prefix (`FI-2026-…` → `FI`). The legacy eForm button in `user_action` sets the decision (`P4M_Button_PD` approve, `P4M_Button_TC` reject, `P4M_Button_YCCS` revise). `ORF_Barcode` can be a Java-serialized `longString`. The snapshot keeps the first 40 barcode lines, so search only covers those. The detail view loads the full list from `/api/operational-request/barcodes/[id]`.
+- Most of the backlog is stuck at "PIC confirms result". `Stale` means open with no task activity for more than 365 days, the same definition as the abandoned-instances report. Overdue and stale are calculated from the snapshot time.
+- The dashboard cohort (3/6/12 months) drives the status donut, monthly trend, completion rate and average lead time. The KPI cards, donut and section table separate open requests into on-time and overdue, so completed + on time + overdue + rejected/cancelled always equals requests started. Backlog by step, aging, the section table's backlog column and the approver chart cover every open request regardless of start date. Links open the workspace with `source`, `status`, `stage`, `department`, `since`, `assignee` or `request` parameters.
+- Demo mode stores fictional requests in `iw.operational-request.v1` in browser storage. Use the actor selector to test each step: creating and resubmitting requests, approving, revising, rejecting, receiving, and entering results. New codes continue the `<SECTION>-<year>-NNN` sequence. Step deadlines are 2 days, or 3 days for the receipt steps.
+
+Run the focused checks with `npm run test:operational-request`, then `npm run lint` and `npm run build`.
+
+## Request Providing Company Uniform
+
+`Uniform_Request` handles requests to issue or exchange company uniforms and PPE (shirts, pants, cap, Jogger and Simon shoes). About 870 requests are started per year, and more than 2,200 are still open. The workspace at `/uniform-request` and the dashboard at `/uniform-request/dashboard` follow the same VI/EN switch, source toggle and read-only production rules as Working Standard. Shared labels are in `src/lib/i18n-uniform-request.ts`.
+
+The current BPMN (v11) has up to 6 steps: requester → direct supervisor (only for the sections listed in `UNIFORM_SUPERVISOR_SECTIONS`) → section manager → GA PIC check (candidate group `iw_ga`) → GA manager → requester confirms receipt. Approvers can approve, request a revision (back to the requester) or reject. Revise and reject need a comment. Older versions also had GM and GA general manager steps. Their task keys map to the `gm` and `gaGeneral` legacy steps, which only show up in filters and charts while cases still wait there.
+
+- The snapshot covers requests started in the last 12 months plus all older unfinished ones (1 read-only transaction). The 10 garment rows come from the eForm variables (`Re_*` returned, `New_*` issued, keeping the original typos such as `New_TShirt_Short_Siz`). Only filled rows are kept, and free-text quantities are summed when they are numeric. The legacy eForm button in `user_action` sets the decision, and missing buttons are inferred from the next step. A request is `Cancelled` when the process ended with a delete reason, and `Rejected` when it passed through the reject service task.
+- Most of the backlog waits at "requester confirms receipt", and several hundred drafts at the request step were never submitted. `Stale` means open with no task activity for more than 365 days. Overdue and stale are calculated from the snapshot time.
+- The dashboard cohort (3/6/12 months) drives the status donut, monthly trend, request types, item demand (rejected and cancelled requests excluded), completion rate and average lead time. Backlog by step, aging, the section table's backlog column and the approver chart cover every open request regardless of start date.
+- Demo mode stores fictional requests in `iw.uniform-request.v1` in browser storage. Use the actor selector to test each step: creating and resubmitting requests, approving, revising, rejecting, GA confirmation and receipt confirmation. New codes continue the `<SECTION>-<year>-NNN` sequence. Step deadlines are 2 days.
+
+Run the focused checks with `npm run test:uniform-request`, then `npm run lint` and `npm run build`.
+
 ## Getting Started
 
 First, run the development server:
