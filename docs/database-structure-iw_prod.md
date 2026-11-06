@@ -456,6 +456,8 @@ Không có trigger, không có stored procedure PL/pgSQL nào khác.
 
 ## 13. Vấn đề & khuyến nghị cho nâng cấp / migration
 
+> Phân tích hiệu năng và sức khỏe server (số liệu tải, EXPLAIN, cấu hình, kế hoạch hành động): xem [database-health-performance-iw_prod.md](./database-health-performance-iw_prod.md).
+
 | # | Vấn đề | Ảnh hưởng | Khuyến nghị |
 |---|---|---|---|
 | 1 | **File đính kèm lưu trong DB** (`act_ge_bytearray`, ~23 GB) + ~1 GB blob mồ côi | Backup/restore chậm, DB phình to | Chuyển nội dung ra object/file storage, dọn blob mồ côi trước khi migrate |
