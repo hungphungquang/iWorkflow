@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test:working-standard": "node --test tests/working-standard.test.mjs",
     "lint": "eslint"
   },
   "dependencies": {

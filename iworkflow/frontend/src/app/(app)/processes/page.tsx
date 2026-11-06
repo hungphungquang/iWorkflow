@@ -25,7 +25,11 @@ export default function ProcessesPage() {
             {processes.map((p) => (
               <li key={p.key} className={`flex items-center gap-2 px-2 py-2 ${p.key === selected.key ? "rounded-md bg-blue-50" : ""}`}>
                 <span className="min-w-0 flex-1">
-                  {p.key === "Process4MChange" ? (
+                  {p.key === "RelSecWS" ? (
+                    <Link href="/working-standard" className="block text-sm font-medium text-blue-700 hover:underline">
+                      {p.name}
+                    </Link>
+                  ) : p.key === "Process4MChange" ? (
                     <Link href="/processes/4m" className="block truncate text-sm font-medium text-blue-700 hover:underline">
                       {p.name} → phân tích
                     </Link>

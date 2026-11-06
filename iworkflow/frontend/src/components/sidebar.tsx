@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Building2,
+  ClipboardCheck,
   FileStack,
   FilePlus2,
   FolderSearch,
@@ -27,7 +28,7 @@ import { READ_ONLY, useDb } from "@/lib/store";
 type Item = { href: string; label: string; icon: LucideIcon; badge?: number };
 
 function isActive(pathname: string, href: string) {
-  if (href === "/" || href === "/cases" || href === "/4m") return pathname === href;
+  if (href === "/" || href === "/cases" || href === "/4m" || href === "/working-standard") return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -45,6 +46,7 @@ export function Sidebar() {
         { href: "/dashboards/unit", label: t.unit, icon: Users },
         { href: "/dashboards/company", label: t.company, icon: Building2 },
         { href: "/4m", label: t.track4m, icon: Gauge },
+        { href: "/working-standard/dashboard", label: "Working Standard", icon: ClipboardCheck },
       ],
     },
     {
@@ -59,6 +61,7 @@ export function Sidebar() {
       title: t.groupWork,
       items: [
         { href: "/tasks", label: t.tasks, icon: Inbox },
+        { href: "/working-standard", label: "Working Standard", icon: ClipboardCheck },
         { href: "/cases/new", label: t.newCase, icon: PlusCircle },
         { href: "/cases", label: t.cases, icon: FolderSearch },
         { href: "/reports", label: t.reports, icon: BarChart3 },

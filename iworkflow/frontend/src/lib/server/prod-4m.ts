@@ -50,7 +50,7 @@ function pgpassPassword(host: string, port: number, db: string, user: string): s
 }
 
 let pool: Pool | null = null;
-function getPool() {
+export function getPool() {
   if (pool) return pool;
   const c = cfg();
   const password = process.env.IW_DB_PASSWORD ?? pgpassPassword(c.host, c.port, c.database, c.user);
